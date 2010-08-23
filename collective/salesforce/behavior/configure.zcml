@@ -1,0 +1,71 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    xmlns:grok="http://namespaces.zope.org/grok"
+    i18n_domain="collective.salesforce.behavior">
+  
+  <!-- Include configuration for dependencies listed in setup.py. -->
+  <include package="plone.app.dexterity" file="meta.zcml" />
+  <include package="plone.app.dexterity" />
+  <include package="collective.autopermission" />
+  <include package="plone.directives.dexterity" />
+  
+  <!-- Grok the package to initialize schema interfaces and content classes. -->
+  <grok:grok package="." />
+
+  <utility name="salesforce.object"
+    factory=".schema.SalesforceObjectMetadata" />
+    
+  <utility name="salesforce.criteria"
+    factory=".schema.SalesforceCriteriaMetadata" />
+    
+  <utility name="salesforce.container"
+    factory=".schema.SalesforceContainerMetadata" />
+    
+  <utility name="salesforce.fields"
+    factory=".schema.SalesforceFieldMetadata" />
+    
+  <utility name="salesforce.converters"
+    factory=".schema.SalesforceConverterMetadata" />
+    
+  <adapter for="zope.schema.interfaces.IField"
+    factory=".converters.DefaultValueConverter" />
+      
+  <adapter for="zope.schema.interfaces.ITextLine"
+    factory=".converters.TextLineValueConverter" />
+    
+  <browser:page
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    name="sf_sync"
+    class=".sync.SFSync"
+    layer=".interfaces.ISalesforceBehaviorLayer"
+    permission="cmf.ManagePortal"
+    />
+    
+  <plone:behavior
+    title="Salesforce Object"
+    description="An item that corresponds to an object in Salesforce."
+    provides=".behaviors.ISalesforceObject"
+    factory=".behaviors.SalesforceObject"
+    marker=".behaviors.ISalesforceObjectMarker"
+    for="plone.dexterity.interfaces.IDexterityContent"
+    />
+    
+  <genericsetup:registerProfile
+    name="default"
+    title="Salesforce Behaviors for Dexterity Content Types"
+    directory="profiles/default"
+    description="Behaviors for creating Dexterity content types that integrate with Salesforce."
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+
+  <genericsetup:importStep
+    name="collective.salesforce.behavior"
+    title="collective.salesforce.behavior"
+    description="Various setup tasks for collective.salesforce.behavior."
+    handler=".setuphandlers.import_various">
+  </genericsetup:importStep>
+  
+</configure>

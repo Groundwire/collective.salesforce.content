@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<layers>
+    <layer name="collective.salesforce.behavior"
+        interface="collective.salesforce.behavior.interfaces.ISalesforceBehaviorLayer" />
+</layers>
