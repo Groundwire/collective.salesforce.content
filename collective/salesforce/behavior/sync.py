@@ -22,6 +22,8 @@ class SFSync(BrowserView):
         """
         
         try:
+            logger.info('Syncing Salesforce objects for %s' 
+                % self.context.Title())
             # Loop through the FTIs that include the ISalesforceObject behavior.
             for fti in self.getDexterityTypes():
                 if ISalesforceObject.__identifier__ in fti.behaviors:
