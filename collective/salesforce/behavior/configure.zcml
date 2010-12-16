@@ -36,6 +36,9 @@
   <adapter for="zope.schema.interfaces.ITextLine"
     factory=".converters.TextLineValueConverter" />
     
+  <adapter for="plone.app.textfield.interfaces.IRichText"
+    factory=".converters.RichTextValueConverter" />
+    
   <browser:page
     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
     name="sf_sync"

@@ -4,6 +4,9 @@ Changelog
 0.1 (unreleased)
 ----------------
 
+* Added value converter for rich text fields.
+  [yomatters - 2010-12-16]
+
 * Added event for objects not found in Salesforce during synchronization.
   [yomatters - 2010-12-16]
 

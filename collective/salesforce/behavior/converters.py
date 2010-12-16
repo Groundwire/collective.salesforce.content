@@ -1,4 +1,5 @@
 from zope.interface import implements
+from plone.app.textfield.value import RichTextValue
 from collective.salesforce.behavior.interfaces import ISalesforceValueConverter
         
 class DefaultValueConverter(object):
@@ -30,4 +31,16 @@ class TextLineValueConverter(DefaultValueConverter):
         
         if value:
             return unicode(value, encoding='utf-8')
+        return None
+        
+class RichTextValueConverter(DefaultValueConverter):
+
+    def toSchemaValue(self, value):
+        """
+        Converts a Salesforce field value to a Zope schema value.
+        """
+
+        if value:
+            return RichTextValue(value, 'text/plain',
+                self.schema_field.output_mime_type)
         return None
