@@ -1,4 +1,5 @@
 from zope import schema
+from zope.component.interfaces import IObjectEvent
 from zope.interface import Interface
 from zope.publisher.interfaces.browser import IDefaultBrowserLayer
 
@@ -58,3 +59,9 @@ class ISalesforceValueConverter(Interface):
         """
         Converts a Zope schema value to a Salesforce field value.
         """
+        
+class INotFoundInSalesforceEvent(IObjectEvent):
+    """
+    An object event that indicates that this object was not returned by
+    Salesforce when its Dexterity type was synchronized.
+    """

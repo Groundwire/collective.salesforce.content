@@ -1,6 +1,7 @@
 import transaction
 import traceback
 from zope.component import createObject, getUtility
+from zope.event import notify
 from zope.lifecycleevent import modified
 from zope.publisher.browser import BrowserView
 from Products.CMFCore.interfaces import ISiteRoot
@@ -10,6 +11,7 @@ from collective.salesforce.behavior import logger
 from collective.salesforce.behavior.utils import queryFromSchema
 from collective.salesforce.behavior.interfaces import ISalesforceObject, \
     ISalesforceObjectMarker
+from collective.salesforce.behavior.events import NotFoundInSalesforceEvent
 
 class SFSync(BrowserView):
     """
@@ -113,6 +115,7 @@ class SFSync(BrowserView):
             if record.Id in sfid_map.keys():
                 sfobj = ISalesforceObject(sfid_map[record.Id].getObject())
                 sfobj.updatePloneObject(record)
+                del sfid_map[record.Id]
             else:
                 sfobj = ISalesforceObject(createObject(fti.factory))
                 sfobj.updatePloneObject(record)
@@ -121,6 +124,16 @@ class SFSync(BrowserView):
             # Reindex the object.
             modified(sfobj.context)
                                     
+            # Commit periodically.
+            if not i % 10:
+                transaction.commit()
+        
+        # Send NotFoundInSalesforce events for objects that weren't
+        # returned by the Salesforce query.
+        for i, item in enumerate(sfid_map.items()):
+            sf_id, brain = item
+            notify(NotFoundInSalesforceEvent(brain.getObject()))
+            
             # Commit periodically.
             if not i % 10:
                 transaction.commit()

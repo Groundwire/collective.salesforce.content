@@ -4,5 +4,8 @@ Changelog
 0.1 (unreleased)
 ----------------
 
+* Added event for objects not found in Salesforce during synchronization.
+  [yomatters - 2010-12-16]
+
 * Initial work on behavior, schema hints, converters and syncing view.
   [yomatters - 2010-08-23]
