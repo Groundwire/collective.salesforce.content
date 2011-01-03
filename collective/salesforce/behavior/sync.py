@@ -11,7 +11,8 @@ from collective.salesforce.behavior import logger
 from collective.salesforce.behavior.utils import queryFromSchema
 from collective.salesforce.behavior.interfaces import ISalesforceObject, \
     ISalesforceObjectMarker
-from collective.salesforce.behavior.events import NotFoundInSalesforceEvent
+from collective.salesforce.behavior.events import NotFoundInSalesforceEvent, \
+    UpdatedFromSalesforceEvent
 
 class SFSync(BrowserView):
     """
@@ -123,6 +124,9 @@ class SFSync(BrowserView):
                 
             # Reindex the object.
             modified(sfobj.context)
+            
+            # Send an UpdatedFromSalesforce event.
+            notify(UpdatedFromSalesforceEvent(sfobj.context))
                                     
             # Commit periodically.
             if not i % 10:

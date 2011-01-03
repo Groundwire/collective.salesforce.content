@@ -65,3 +65,8 @@ class INotFoundInSalesforceEvent(IObjectEvent):
     An object event that indicates that this object was not returned by
     Salesforce when its Dexterity type was synchronized.
     """
+    
+class IUpdatedFromSalesforceEvent(IObjectEvent):
+    """
+    An object event that indicates that this object was updated from Salesforce.
+    """
