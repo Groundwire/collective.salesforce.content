@@ -41,6 +41,6 @@ class RichTextValueConverter(DefaultValueConverter):
         """
 
         if value:
-            return RichTextValue(value, 'text/plain',
+            return RichTextValue(value, self.schema_field.default_mime_type,
                 self.schema_field.output_mime_type)
         return None

@@ -4,6 +4,10 @@ Changelog
 0.1 (unreleased)
 ----------------
 
+* For rich text fields, assume the mimetype of the input is the default
+  mimetype of the field.
+  [yomatters - 2011-01-07]
+
 * Fixed query for existing objects to look only for objects providing the
   schema interface.
   [yomatters - 2011-01-07]
