@@ -4,6 +4,10 @@ Changelog
 0.1 (unreleased)
 ----------------
 
+* Fixed query for existing objects to look only for objects providing the
+  schema interface.
+  [yomatters - 2011-01-07]
+
 * Added event for objects updated from Salesforce during synchronization.
   [yomatters - 2011-01-03]
 
