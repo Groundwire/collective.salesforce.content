@@ -25,6 +25,7 @@ setup(name='collective.salesforce.behavior',
           'collective.autopermission',
           'plone.app.dexterity',
           'plone.indexer',
+          'Products.salesforcebaseconnector',
       ],
       entry_points="""
       [z3c.autoinclude.plugin]

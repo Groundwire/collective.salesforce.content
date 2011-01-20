@@ -8,6 +8,7 @@ from five import grok
 from plone.indexer import indexer
 from plone.dexterity.interfaces import IDexterityContent
 from plone.memoize import instance
+from beatbox.python_client import QueryRecord
 from collective.salesforce.behavior.interfaces import ISalesforceObject, \
     ISalesforceObjectMarker, ISalesforceValueConverter
 
@@ -72,16 +73,18 @@ class SalesforceObject(object):
         schema = self._getSchema()
         sf_fields = self._queryTaggedValue('salesforce.fields', {})
         sf_converters = self._queryTaggedValue('salesforce.converters', {})
-                        
+                                
         for field in schema:
             if field in sf_fields.keys():
                 
                 # Try to get a corresponding value from the record.
                 value = record
                 for field_part in sf_fields[field].split('.'):
-                    if value is _marker:
+                    if type(value) == QueryRecord:
+                        value = value.get(field_part, _marker)
+                    else:
+                        value = _marker
                         break
-                    value = value.get(field_part, _marker)
                 
                 # If we found a value, convert it to a schema value and
                 # set it on the object.

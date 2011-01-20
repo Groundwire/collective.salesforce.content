@@ -4,6 +4,9 @@ Changelog
 0.1 (unreleased)
 ----------------
 
+* Fixed handling of unset relationships in queries that span relationships.
+  [yomatters - 2011-01-20]
+
 * For rich text fields, assume the mimetype of the input is the default
   mimetype of the field.
   [yomatters - 2011-01-07]
