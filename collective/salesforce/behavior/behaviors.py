@@ -4,6 +4,7 @@ from zope.app.component.hooks import getSite
 from zope.app.container.interfaces import INameChooser
 from zope.component import adapts, getAdapter
 from zope.interface import implements
+from zope.interface.interfaces import IInterface
 from five import grok
 from plone.indexer import indexer
 from plone.dexterity.interfaces import IDexterityContent
@@ -11,6 +12,9 @@ from plone.memoize import instance
 from beatbox.python_client import QueryRecord
 from collective.salesforce.behavior.interfaces import ISalesforceObject, \
     ISalesforceObjectMarker, ISalesforceValueConverter
+from plone.app.dexterity.interfaces import IBehaviorActions
+from plone.app.dexterity.interfaces import ITypeSchemaContext
+from plone.app.dexterity.browser.behaviors import BehaviorAction
 
 class _marker(object):
     """
@@ -141,7 +145,8 @@ class SalesforceObject(object):
         
         new_name = container._setObject(name, self.context)
         self.context = container._getOb(new_name)
-                    
+
+
 @indexer(ISalesforceObjectMarker)
 def sf_object_id_indexer(obj):
     sfobj = ISalesforceObject(aq_base(obj), None)
@@ -149,3 +154,10 @@ def sf_object_id_indexer(obj):
         return sfobj.sf_object_id
     return None
 grok.global_adapter(sf_object_id_indexer, name='sf_object_id')
+
+
+def salesforce_behavior_actions(behavior_reg, context):
+    # XXX only show if behavior is enabled for this type
+    if behavior_reg is ISalesforceObject:
+        return [BehaviorAction(title = 'Settings', href=context.absolute_url() + '/@@salesforce-settings')]
+grok.global_adapter(salesforce_behavior_actions, (IInterface, ITypeSchemaContext), IBehaviorActions)

@@ -1,0 +1,2 @@
+- only show the behavior on sites where this product is installed
+- provide an action on the types listing to run the sync
