@@ -4,6 +4,7 @@ from zope.interface.interfaces import IInterface
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from zope import schema
 from z3c.form import form, field
+from plone.schemaeditor.interfaces import IEditableSchema
 
 
 class ISalesforceMetadata(Interface):
@@ -81,15 +82,41 @@ class SalesforceMetadataAdapter(object):
         return mapping.keys()
     @fields.setter
     def fields(self, value):
+        # make sure we always have a place to put the Id
+        if 'sf_object_id' not in self.context.names():
+            field = schema.ASCIILine(
+                __name__ = 'sf_object_id',
+                title = u'Salesforce object Id',
+                )
+            IEditableSchema(self.context).addField(field)
+        if 'title' not in self.context.names():
+            field = schema.ASCIILine(
+                __name__ = 'title',
+                title = u'Name',
+                )
+            IEditableSchema(self.context).addField(field)
+
         mapping = self.context.queryTaggedValue('salesforce.fields', {})
         current = set(mapping)
         added = value - current
         removed = current - value
-        for fname in added:
-            mapping[fname] = fname
-            # XXX create field
+        for fname in sorted(added):
+            if fname == 'Title':
+                # special case because this collides with Plone's title
+                fid = 'sf_title'
+            else:
+                fid = fname.lower()
+            mapping[fid] = fname
+            if fname not in self.context.names():
+                # XXX determine field type & properties from SF field
+                field = schema.TextLine(
+                    __name__ = fid,
+                    title = unicode(fname),
+                    )
+                IEditableSchema(self.context).addField(field)
         for fname in removed:
             del mapping[fname]
+        mapping['title'] = 'Name'
         self.context.setTaggedValue('salesforce.fields', mapping)
 
 

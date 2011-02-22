@@ -31,6 +31,9 @@ def SObjectFieldsVocabularyFactory(context):
     
     terms = []
     for fname, fieldinfo in list_sobject_fields(sf_obj_type):
+        if fname in ('Id', 'Name'):
+            continue
+        
         value = token = fname
         if fieldinfo.nillable or fieldinfo.defaultedOnCreate or not fieldinfo.createable:
             title = unicode(fname)

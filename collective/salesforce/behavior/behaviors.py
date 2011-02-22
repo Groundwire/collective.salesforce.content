@@ -15,6 +15,8 @@ from collective.salesforce.behavior.interfaces import ISalesforceObject, \
 from plone.app.dexterity.interfaces import IBehaviorActions
 from plone.app.dexterity.interfaces import ITypeSchemaContext
 from plone.app.dexterity.browser.behaviors import BehaviorAction
+from Products.CMFCore.utils import getToolByName
+
 
 class _marker(object):
     """
@@ -158,5 +160,9 @@ grok.global_adapter(sf_object_id_indexer, name='sf_object_id')
 
 def salesforce_behavior_actions(behavior_reg, context):
     if behavior_reg is ISalesforceObject and behavior_reg.__identifier__ in context.fti.behaviors:
-        return [BehaviorAction(title = 'Settings', href=context.absolute_url() + '/@@salesforce-settings')]
+        portal_url = getToolByName(context, 'portal_url')()
+        return [
+            BehaviorAction(title = 'Settings', href=context.absolute_url() + '/@@salesforce-settings'),
+            BehaviorAction(title = 'Sync', href=portal_url + '/@@sf_sync'),
+        ]
 grok.global_adapter(salesforce_behavior_actions, (IInterface, ITypeSchemaContext), IBehaviorActions)

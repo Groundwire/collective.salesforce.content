@@ -17,8 +17,16 @@
     </tal:js>
   </head>
   
-  <body metal:fill-slot="content-core">
+  <body metal:fill-slot="main">
+        
+    <h1 tal:content="view/label | nothing" />
+    
+    <div class="description"
+       tal:condition="view/description | nothing"
+       tal:content="structure view/description">Form description</div>
+    
     <metal:block use-macro="context/@@ploneform-macros/titlelessform" />
+        
   </body>
 
 </html>

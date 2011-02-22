@@ -30,7 +30,11 @@ class TextLineValueConverter(DefaultValueConverter):
         """
         
         if value:
-            return unicode(value, encoding='utf-8')
+            try:
+                return unicode(value, encoding='utf-8')
+            except TypeError:
+                # edge case for datetimes
+                return unicode(value)
         return None
         
 class RichTextValueConverter(DefaultValueConverter):

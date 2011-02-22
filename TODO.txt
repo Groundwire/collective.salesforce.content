@@ -1,2 +1,3 @@
 - provide an action on the types listing to run the sync
 - clean up settings when the behavior is disabled
+- use SF Name as the title, special case mapping for the SF Title
