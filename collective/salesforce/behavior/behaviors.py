@@ -157,7 +157,6 @@ grok.global_adapter(sf_object_id_indexer, name='sf_object_id')
 
 
 def salesforce_behavior_actions(behavior_reg, context):
-    # XXX only show if behavior is enabled for this type
-    if behavior_reg is ISalesforceObject:
+    if behavior_reg is ISalesforceObject and behavior_reg.__identifier__ in context.fti.behaviors:
         return [BehaviorAction(title = 'Settings', href=context.absolute_url() + '/@@salesforce-settings')]
 grok.global_adapter(salesforce_behavior_actions, (IInterface, ITypeSchemaContext), IBehaviorActions)
