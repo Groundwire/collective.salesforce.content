@@ -1,16 +1,17 @@
 from zope.component import adapts
 from zope.interface import Interface, implements
 from zope.interface.interfaces import IInterface
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from zope import schema
 from z3c.form import form, field
 
 
 class ISalesforceMetadata(Interface):
     
-    # XXX update fields options on change via AJAX
     sf_obj_type = schema.Choice(
         title = u'Salesforce object type',
         vocabulary = 'collective.salesforce.behavior.SObjectTypes',
+        default = 'Contact',
         )
 
     # XXX use TALES expression
@@ -94,6 +95,7 @@ class SalesforceMetadataAdapter(object):
 
 class SalesforceMetadataForm(form.EditForm):
     label = u'Salesforce Object Settings'
+    template = ViewPageTemplateFile('settings.pt')
     fields = field.Fields(ISalesforceMetadata)
     
     # Use the schema as the form context. When the form is saved, the schema
@@ -102,3 +104,14 @@ class SalesforceMetadataForm(form.EditForm):
     # the schema to trigger its serialization.
     def getContent(self):
         return self.context.schema
+
+
+class SObjectFieldsHelper(form.Form):
+    fields = field.Fields(ISalesforceMetadata).select('fields')
+
+    def getContent(self):
+        return self.context.schema
+    
+    def __call__(self):
+        self.update()
+        return self.widgets['fields'].render()

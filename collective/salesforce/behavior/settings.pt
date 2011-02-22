@@ -1,0 +1,24 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      i18n:domain="plone.z3cform"
+      metal:use-macro="context/main_template/macros/master">
+      
+  <head>
+    <tal:js metal:fill-slot="javascript_head_slot">
+      <script type="text/javascript">
+        $(function() {
+          $('#form-widgets-sf_obj_type').change(function() {
+            $('#form-widgets-fields').load(location.href + '/../@@getSObjectFieldsWidget option', $(this).serialize());
+          });
+        });
+      </script>
+    </tal:js>
+  </head>
+  
+  <body metal:fill-slot="content-core">
+    <metal:block use-macro="context/@@ploneform-macros/titlelessform" />
+  </body>
+
+</html>
