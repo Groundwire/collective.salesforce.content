@@ -1,10 +1,9 @@
 from collective.salesforce.behavior import logger
     
-def queryFromSchema(schema, sf_ids=[]):
+def queryFromSchema(schema):
     """
     Given a schema tagged with Salesforce values, generate a query to return
-    all the records for objects of that type. If Salesforce IDs is specified,
-    we only query for records with those IDs.
+    all the records for objects of that type.
     """
     
     sf_object = schema.queryTaggedValue('salesforce.object', None)
@@ -28,4 +27,3 @@ def queryFromSchema(schema, sf_ids=[]):
         return query
         
     return None
-    

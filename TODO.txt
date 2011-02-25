@@ -1,3 +1,18 @@
-- provide an action on the types listing to run the sync
+planned:
+- add a screen with info about the sync, instructions on how to run via cron
+  - is it possible to have some sort of status indicator?
 - clean up settings when the behavior is disabled
-- use SF Name as the title, special case mapping for the SF Title
+- support more field types
+  - date
+  - picklist (w/ sync of vocab)
+- support setting workflow state based on some field in SF, somehow
+
+backlog:
+- mark fields as searchable (probably belongs in a separate behavior)
+- sync fields from referenced objects
+- reconstructing object relations
+- support attachments
+- push changes back to Salesforce
+- view editor
+- support TALES expression in criteria setting
+- better widget for specifying target path

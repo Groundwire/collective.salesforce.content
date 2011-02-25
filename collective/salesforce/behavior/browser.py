@@ -15,7 +15,6 @@ class ISalesforceMetadata(Interface):
         default = 'Contact',
         )
 
-    # XXX use TALES expression
     criteria = schema.ASCIILine(
         title = u'Query Criteria',
         description = u'This will form the WHERE clause of the SOQL expression used '
@@ -24,7 +23,6 @@ class ISalesforceMetadata(Interface):
         required = False,
         )
     
-    # XXX use content tree widget
     container = schema.ASCIILine(
         title = u'Container',
         description = u'Determines where items of this type will be placed when '
