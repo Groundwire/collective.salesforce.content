@@ -28,7 +28,7 @@ setup(name='collective.salesforce.behavior',
           'Products.salesforcebaseconnector',
       ],
       extras_require={
-          'test': ['unittest2',],
+          'test': ['plone.testing [zca]',],
       },
       entry_points="""
       [z3c.autoinclude.plugin]
