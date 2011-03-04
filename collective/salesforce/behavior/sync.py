@@ -144,4 +144,3 @@ class SFSync(BrowserView):
             # Commit periodically.
             if not i % 10:
                 transaction.commit()
-        

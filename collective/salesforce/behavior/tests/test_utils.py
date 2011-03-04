@@ -1,7 +1,7 @@
 import unittest2 as unittest
 
 
-class UtilsTestCase(unittest.TestCase):
+class TestUtils(unittest.TestCase):
     
     def _makeSchema(self):
         from zope.interface import Interface
