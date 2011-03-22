@@ -4,6 +4,9 @@ Changelog
 0.1 (unreleased)
 ----------------
 
+* Added a control panel that can be used to trigger a synchronization.
+  [yomatters - 2011-03-22]
+
 * Fixed handling of unset relationships in queries that span relationships.
   [yomatters - 2011-01-20]
 

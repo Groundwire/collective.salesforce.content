@@ -47,6 +47,14 @@
     permission="cmf.ManagePortal"
     />
     
+  <browser:page
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    name="salesforce-behavior"
+    class=".controlpanel.SalesforceBehaviorControlPanel"
+    layer=".interfaces.ISalesforceBehaviorLayer"
+    permission="cmf.ManagePortal"
+    />
+    
   <plone:behavior
     title="Salesforce Object"
     description="An item that corresponds to an object in Salesforce."

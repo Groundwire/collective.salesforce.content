@@ -19,7 +19,7 @@ class SFSync(BrowserView):
     Synchronizes Plone objects with their corresponding Salesforce objects.
     """
     
-    def __call__(self, catch_errors=False, email=None):
+    def __call__(self, catch_errors=False, email=None, types=[]):
         """
         Perform the synchronization.
         """
@@ -29,6 +29,8 @@ class SFSync(BrowserView):
                 % self.context.Title())
             # Loop through the FTIs that include the ISalesforceObject behavior.
             for fti in self.getDexterityTypes():
+                if types and not fti.__name__ in types:
+                    continue
                 if ISalesforceObject.__identifier__ in fti.behaviors:
                     query = self.getQueryFromType(fti)
                     if query:
