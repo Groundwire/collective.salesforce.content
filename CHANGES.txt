@@ -4,6 +4,9 @@ Changelog
 0.1 (unreleased)
 ----------------
 
+* Convert rich text values to unicode so that transforms succeed.
+  [yomatters - 2011-03-28]
+
 * Added a control panel that can be used to trigger a synchronization.
   [yomatters - 2011-03-22]
 
