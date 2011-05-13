@@ -75,9 +75,9 @@ class SalesforceObject(object):
         # zope.app.content.interfaces.IContentType is provided
         assert schema is not None, "Schema was None; does your schema " + \
             "need to provide zope.app.content.interfaces.IContentType?"
-        sf_fields = self._queryTaggedValue('salesforce.fields', {})
+        sf_fields = parseSFFieldNames(self._queryTaggedValue(
+                                        'salesforce.fields', {}))
         sf_converters = self._queryTaggedValue('salesforce.converters', {})
-
         for field in schema:
             if field in sf_fields.keys():
                 

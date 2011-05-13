@@ -13,9 +13,13 @@ def queryFromSchema(schema, sf_ids=[]):
     
     if sf_object and sf_fields:
         # Get a list of fields for the query.
+        raw_fields = ['Id'] + sf_fields.values()
         fields = ['%s.%s' % (sf_object, field) for field \
-            in ['Id'] + sf_fields.values()]
-    
+            in raw_fields if not field.startswith('(')]
+        # Fields will start with '(' if they are outer joins. Let's not
+        # prefix them with the object name.
+        fields += [field for field  in raw_fields if field.startswith('(')]
+
         # Construct the main query.
         query = "SELECT %s FROM %s" % (
             ', '.join(fields),
@@ -28,4 +32,21 @@ def queryFromSchema(schema, sf_ids=[]):
         return query
         
     return None
+
+def parseSFFieldNames(field_map):
+    """
+    If SF "field names" coming from XML schema really contain outer joins,
+    translate them to the name used in the SF result set.
     
+    We're assuming that outer joins look something like:
+    "(SELECT foo from sf_object.field_name)"
+    
+    in which case we'll translate it to "field_name"
+    """
+    for f,v in field_map.items():
+        if v.startswith('('):
+            new_val = v[v.rfind(' '):v.rfind(')')].strip()
+            # strip prefix
+            new_val = new_val.split('.')[-1]
+            field_map[f] = new_val
+    return field_map
