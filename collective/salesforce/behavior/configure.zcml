@@ -39,6 +39,9 @@
   <adapter for="zope.schema.interfaces.ITextLine"
     factory=".converters.TextLineValueConverter" />
     
+  <adapter for="zope.schema.interfaces.IText"
+    factory=".converters.TextLineValueConverter" />
+    
   <adapter for="plone.app.textfield.interfaces.IRichText"
     factory=".converters.RichTextValueConverter" />
     
