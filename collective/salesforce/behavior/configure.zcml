@@ -27,6 +27,9 @@
   <utility name="salesforce.fields"
     factory=".schema.SalesforceFieldMetadata" />
     
+  <utility name="salesforce.relationships"
+    factory=".schema.SalesforceRelationshipMetadata" />
+    
   <utility name="salesforce.converters"
     factory=".schema.SalesforceConverterMetadata" />
     
@@ -38,6 +41,9 @@
     
   <adapter for="plone.app.textfield.interfaces.IRichText"
     factory=".converters.RichTextValueConverter" />
+    
+  <adapter for="zope.schema.interfaces.IList"
+    factory=".converters.ListValueConverter" />
     
   <browser:page
     for="Products.CMFPlone.interfaces.IPloneSiteRoot"

@@ -1,3 +1,4 @@
+from zope.component import getAdapter
 from zope.interface import implements
 from plone.app.textfield.value import RichTextValue
 from collective.salesforce.behavior.interfaces import ISalesforceValueConverter
@@ -45,3 +46,22 @@ class RichTextValueConverter(DefaultValueConverter):
                 self.schema_field.default_mime_type,
                 self.schema_field.output_mime_type)
         return None
+        
+class ListValueConverter(DefaultValueConverter):
+    
+    item_converter = u''
+
+    def toSchemaValue(self, value):
+        """
+        Converts a Salesforce field value to a Zope schema value.
+        """
+        
+        # Look up an item converter based on the value_type of the list
+        # and use it to convert each of the list item values.
+        item_converter = getAdapter(
+            self.schema_field.value_type,
+            interface=ISalesforceValueConverter,
+            name=self.item_converter,
+        )
+        
+        return [item_converter.toSchemaValue(item) for item in value]
