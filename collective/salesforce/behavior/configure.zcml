@@ -73,6 +73,20 @@
     for="plone.dexterity.interfaces.IDexterityContent"
     />
     
+  <plone:behavior
+    title="Salesforce Object: Publish Updated Objects"
+    description="This object should be published whenever it is updated from Salesforce."
+    provides=".interfaces.IPublishUpdated"
+    for="plone.dexterity.interfaces.IDexterityContent"
+    />
+    
+  <plone:behavior
+    title="Salesforce Object: Reject Not Found Objects"
+    description="This object should be made private if it is not found in Salesforce during a sync."
+    provides=".interfaces.IRejectNotFound"
+    for="plone.dexterity.interfaces.IDexterityContent"
+    />
+    
   <genericsetup:registerProfile
     name="default"
     title="Salesforce Behaviors for Dexterity Content Types"
