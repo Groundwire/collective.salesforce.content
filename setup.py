@@ -27,6 +27,9 @@ setup(name='collective.salesforce.behavior',
           'plone.indexer',
           'Products.salesforcebaseconnector',
       ],
+      extras_require={
+          'test': ['plone.testing [zca]',],
+      },
       entry_points="""
       [z3c.autoinclude.plugin]
       target = plone

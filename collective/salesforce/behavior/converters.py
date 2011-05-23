@@ -13,7 +13,6 @@ class DefaultValueConverter(object):
         """
         Converts a Salesforce field value to a Zope schema value.
         """
-        
         return value
 
     def toSalesforceValue(self, value):
@@ -24,23 +23,25 @@ class DefaultValueConverter(object):
         return value
         
 class TextLineValueConverter(DefaultValueConverter):
-    
     def toSchemaValue(self, value):
         """
         Converts a Salesforce field value to a Zope schema value.
         """
         
         if value:
-            return unicode(value, encoding='utf-8')
+            try: 
+                return unicode(value, encoding='utf-8') 
+            except TypeError: 
+                # edge case for datetimes 
+                return unicode(value)
         return None
         
 class RichTextValueConverter(DefaultValueConverter):
-
     def toSchemaValue(self, value):
         """
         Converts a Salesforce field value to a Zope schema value.
         """
-
+    
         if value:
             return RichTextValue(unicode(value, 'utf-8'), 
                 self.schema_field.default_mime_type,

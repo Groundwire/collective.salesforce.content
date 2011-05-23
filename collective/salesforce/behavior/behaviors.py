@@ -51,7 +51,7 @@ class SalesforceObject(object):
         Returns the record matching this object from Salesforce.
         """
         
-        raise NotImplemented
+        raise Exception('Not implemented.')
     
     def updatePloneObject(self, record=None):
         """
@@ -106,7 +106,7 @@ class SalesforceObject(object):
         of the object, it is usually best to populate the object before
         attempting to get the container.
         """
-                
+        
         container_value = self._queryTaggedValue('salesforce.container', None)
         if not container_value:
             return default
