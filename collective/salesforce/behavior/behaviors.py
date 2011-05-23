@@ -8,14 +8,9 @@ from five import grok
 from plone.indexer import indexer
 from plone.dexterity.interfaces import IDexterityContent
 from plone.memoize import instance
-from beatbox.python_client import QueryRecord
 from collective.salesforce.behavior.interfaces import ISalesforceObject, \
     ISalesforceObjectMarker, ISalesforceValueConverter
-
-class _marker(object):
-    """
-    Empty value marker.
-    """
+from collective.salesforce.behavior.utils import valueFromRecord
 
 class SalesforceObject(object):
     implements(ISalesforceObject)
@@ -75,31 +70,34 @@ class SalesforceObject(object):
         # zope.app.content.interfaces.IContentType is provided
         assert schema is not None, "Schema was None; does your schema " + \
             "need to provide zope.app.content.interfaces.IContentType?"
+        
         sf_fields = self._queryTaggedValue('salesforce.fields', {})
+        sf_relationships = self._queryTaggedValue('salesforce.relationships', {})
         sf_converters = self._queryTaggedValue('salesforce.converters', {})
-
+        
         for field in schema:
             if field in sf_fields.keys():
                 
+                # Determine the 'path' to the field value.
+                field_parts = sf_fields[field].split('.')
+                if field in sf_relationships.keys():
+                    field_parts = sf_relationships[field].split('.') + field_parts
+                
                 # Try to get a corresponding value from the record.
-                value = record
-                for field_part in sf_fields[field].split('.'):
-                    if type(value) == QueryRecord:
-                        value = value.get(field_part, _marker)
-                    else:
-                        value = _marker
-                        break
+                try:
+                    value = valueFromRecord(record, field_parts)
+                except KeyError:
+                    continue
                 
                 # If we found a value, convert it to a schema value and
                 # set it on the object.
-                if not value is _marker:
-                    converter_name = sf_converters.get(field, u'')
-                    converter = getAdapter(
-                        schema[field],
-                        interface=ISalesforceValueConverter,
-                        name=converter_name,
-                    )
-                    setattr(self.context, field, converter.toSchemaValue(value))
+                converter_name = sf_converters.get(field, u'')
+                converter = getAdapter(
+                    schema[field],
+                    interface=ISalesforceValueConverter,
+                    name=converter_name,
+                )
+                setattr(self.context, field, converter.toSchemaValue(value))
                     
     def getContainer(self, default=None):
         """

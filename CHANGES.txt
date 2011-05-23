@@ -4,6 +4,17 @@ Changelog
 0.1 (unreleased)
 ----------------
 
+* Added optional helper behaviors to trigger appropriate workflow transitions
+  when an object is updated or not found in Salesforce.
+  [yomatters - 2011-05-20]
+
+* Convert text fields to unicode to avoid indexing errors.
+  [yomatters - 2011-05-20]
+
+* Added relationship metadata handler and list field converter to allow for
+  parent-to-child relationship queries.
+  [yomatters - 2011-05-20]
+
 * Convert rich text values to unicode so that transforms succeed.
   [yomatters - 2011-03-28]
 

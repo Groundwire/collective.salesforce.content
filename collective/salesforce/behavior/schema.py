@@ -57,6 +57,10 @@ class SalesforceContainerMetadata(BaseSalesforceMetadata):
 class SalesforceFieldMetadata(BaseSalesforceFieldMetadata):
     xml_attr = 'field'
     tag_key = 'salesforce.fields'
+    
+class SalesforceRelationshipMetadata(BaseSalesforceFieldMetadata):
+    xml_attr = 'relationship'
+    tag_key = 'salesforce.relationships'
             
 class SalesforceConverterMetadata(BaseSalesforceFieldMetadata):
     xml_attr = 'converter'

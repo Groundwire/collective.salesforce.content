@@ -27,6 +27,9 @@
   <utility name="salesforce.fields"
     factory=".schema.SalesforceFieldMetadata" />
     
+  <utility name="salesforce.relationships"
+    factory=".schema.SalesforceRelationshipMetadata" />
+    
   <utility name="salesforce.converters"
     factory=".schema.SalesforceConverterMetadata" />
     
@@ -36,8 +39,14 @@
   <adapter for="zope.schema.interfaces.ITextLine"
     factory=".converters.TextLineValueConverter" />
     
+  <adapter for="zope.schema.interfaces.IText"
+    factory=".converters.TextLineValueConverter" />
+    
   <adapter for="plone.app.textfield.interfaces.IRichText"
     factory=".converters.RichTextValueConverter" />
+    
+  <adapter for="zope.schema.interfaces.IList"
+    factory=".converters.ListValueConverter" />
     
   <browser:page
     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
@@ -61,6 +70,20 @@
     provides=".behaviors.ISalesforceObject"
     factory=".behaviors.SalesforceObject"
     marker=".behaviors.ISalesforceObjectMarker"
+    for="plone.dexterity.interfaces.IDexterityContent"
+    />
+    
+  <plone:behavior
+    title="Salesforce Object: Publish Updated Objects"
+    description="This object should be published whenever it is updated from Salesforce."
+    provides=".interfaces.IPublishUpdated"
+    for="plone.dexterity.interfaces.IDexterityContent"
+    />
+    
+  <plone:behavior
+    title="Salesforce Object: Reject Not Found Objects"
+    description="This object should be made private if it is not found in Salesforce during a sync."
+    provides=".interfaces.IRejectNotFound"
     for="plone.dexterity.interfaces.IDexterityContent"
     />
     

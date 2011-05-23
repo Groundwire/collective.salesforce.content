@@ -70,3 +70,15 @@ class IUpdatedFromSalesforceEvent(IObjectEvent):
     """
     An object event that indicates that this object was updated from Salesforce.
     """
+
+class IPublishUpdated(Interface):
+    """
+    Marker interface to indicate that this object should be in the published
+    state after it is updated from Salesforce during a sync.
+    """
+
+class IRejectNotFound(Interface):
+    """
+    Marker interface to indicate that this object should be rejected (in the
+    workflow sense) if it is not found during a Salesforce sync.
+    """
