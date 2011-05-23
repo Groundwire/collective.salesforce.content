@@ -1,3 +1,4 @@
+from zope.schema.interfaces import ICollection, IObject
 from beatbox.python_client import QueryRecord, QueryRecordSet
 from collective.salesforce.behavior import logger
     
@@ -14,25 +15,34 @@ def queryFromSchema(schema):
     
     if sf_object and (sf_fields or sf_relationships):
         selects = ['%s.Id' % (sf_object)]
-        for schema_field in schema:
-            if schema_field in sf_fields.keys():
+        for schema_field_name in schema:
+            if schema_field_name in sf_fields.keys():
                 # Has both sf:field and sf:relationship
-                if schema_field in sf_relationships.keys():
-                    selects.append('(SELECT %s FROM %s.%s)' % (
-                        sf_fields[schema_field],
+                if schema_field_name in sf_relationships.keys():
+                    selects.append('(SELECT Id, %s FROM %s.%s)' % (
+                        sf_fields[schema_field_name],
                         sf_object,
-                        sf_relationships[schema_field],
+                        sf_relationships[schema_field_name],
                     ))
                 # Has sf:field but not sf:relationship
                 else:
                     selects.append('%s.%s' % (
                         sf_object,
-                        sf_fields[schema_field],
+                        sf_fields[schema_field_name],
                     ))
             # Has sf:relationship but not sf:field
-            elif schema_field in sf_relationships.keys():
-                raise ValueError, 'You cannot define sf:relationship ' \
-                    'without defining sf:field.'
+            elif schema_field_name in sf_relationships.keys():
+                # Zope field is an collection whose value_type is IObject:
+                # build subquery based on the object schema
+                field = schema[schema_field_name]
+                if ICollection.providedBy(field) and IObject.providedBy(field.value_type):
+                    raise ValueError('Not implemented.')
+                # Otherwise just get the Ids
+                else:
+                    selects.append('(SELECT Id FROM %s.%s)' % (
+                        sf_object,
+                        sf_relationships[schema_field_name],
+                    ))
 
         # Construct the main query.
         query = "SELECT %s FROM %s" % (
