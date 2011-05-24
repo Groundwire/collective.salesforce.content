@@ -57,17 +57,16 @@ class TestUtils(unittest.TestCase):
         schema.setTaggedValue('salesforce.fields', {'vector': 'Name'})
         schema.setTaggedValue('salesforce.relationships', {'vector': 'OpportunityContactRoles'})
         query = self._queryFromSchema(schema)
-        self.assertEqual('SELECT Contact.Id, (SELECT Id, Name FROM Contact.OpportunityContactRoles) FROM Contact', query)
+        self.assertEqual('SELECT Contact.Id, (SELECT Name FROM Contact.OpportunityContactRoles) FROM Contact', query)
 
     def test_queryFromSchema_relationship_without_field(self):
-        # If a relationship is specified with no fields and the Zope field isn't
-        # an IObjectField, simply fetch the Ids of the related objects
+        # Specifying a relationship with no fields is only supported if the
+        # schema field is an IObjectField.
         # <field type="zope.schema.List" sf:relationship="OpportunityContactRoles" />
         schema = self._makeSchema()
         schema.setTaggedValue('salesforce.object', 'Contact')
         schema.setTaggedValue('salesforce.relationships', {'vector': 'OpportunityContactRoles'})
-        query = self._queryFromSchema(schema)
-        self.assertEqual('SELECT Contact.Id, (SELECT Id FROM Contact.OpportunityContactRoles) FROM Contact', query)
+        self.assertRaises(ValueError, self._queryFromSchema, schema)
 
     def test_queryFromSchema_relationship_fields_to_list_of_objects(self):
         # main schema:

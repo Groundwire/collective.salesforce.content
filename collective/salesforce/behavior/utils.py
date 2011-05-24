@@ -23,7 +23,7 @@ def queryFromSchema(schema, relationship_name=None, add_prefix=True):
             if schema_field_name in sf_fields.keys():
                 # Has both sf:field and sf:relationship
                 if schema_field_name in sf_relationships.keys():
-                    selects.append('(SELECT Id, %s FROM %s%s)' % (
+                    selects.append('(SELECT %s FROM %s%s)' % (
                         sf_fields[schema_field_name],
                         prefix,
                         sf_relationships[schema_field_name],
@@ -45,12 +45,10 @@ def queryFromSchema(schema, relationship_name=None, add_prefix=True):
                         relationship_name = sf_relationships[schema_field_name],
                         add_prefix = False)
                     selects.append('(%s)' % subquery)
-                # Otherwise just get the Ids
+                # Otherwise not supported
                 else:
-                    selects.append('(SELECT Id FROM %s%s)' % (
-                        prefix,
-                        sf_relationships[schema_field_name],
-                    ))
+                    raise ValueError('sf:relationship may only be specified without '
+                                     'sf:field if the field is a zope.schema.Object.')
 
         # Construct the main query.
         query = "SELECT %s FROM %s" % (
