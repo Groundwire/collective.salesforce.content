@@ -162,7 +162,7 @@ class TestSalesforceObject(unittest.TestCase):
             Id = '1234',
             OpportunityContactRoles = QueryRecordSet(
                 records = [QueryRecord(
-                    Role = 'Terminator',
+                    Role = 'Code Monkey',
                     Account = QueryRecord(
                         Name = 'Groundwire',
                         ),
@@ -173,10 +173,7 @@ class TestSalesforceObject(unittest.TestCase):
             )
         
         sfobj.updatePloneObject(record=record)
-        self.assertEqual([
-            {'role': u'Code Monkey'},
-            {'org': u'Groundwire'},
-            ], sfobj.context.roles)
+        self.assertEqual([{'org': u'Groundwire', 'role': u'Code Monkey'}], sfobj.context.roles)
     
     def test_updatePloneObject_no_record(self):
         sfobj = self._makeOne()

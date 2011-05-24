@@ -1,7 +1,10 @@
+from zope.component import getAdapter
 from zope.schema.interfaces import ICollection, IObject
 from beatbox.python_client import QueryRecord, QueryRecordSet
 from collective.salesforce.behavior import logger
-    
+from collective.salesforce.behavior.interfaces import ISalesforceValueConverter
+
+
 def queryFromSchema(schema, relationship_name=None, add_prefix=True):
     """
     Given a schema tagged with Salesforce values, generate a query to return
@@ -90,3 +93,47 @@ def valueFromRecord(parent, path):
                 result.append(valueFromRecord(item, next_path))
             return result
     return value
+
+
+def convertToSchemaValue(field, sf_value):
+    """Converts a value from Salesforce into a value for Plone."""
+    schema = field.interface
+    sf_converters = schema.queryTaggedValue('salesforce.converters', {})
+    converter_name = sf_converters.get(field.__name__, u'')
+    converter = getAdapter(field, ISalesforceValueConverter, name=converter_name)
+    return converter.toSchemaValue(sf_value)
+
+
+def convertRecord(record, schema):
+    """Converts the QueryRecords from a query result into a dict based on the schema.
+    """
+    sf_fields = schema.queryTaggedValue('salesforce.fields', {})
+    sf_relationships = schema.queryTaggedValue('salesforce.relationships', {})
+    
+    d = {}
+    for fname in schema:
+        field = schema[fname]
+        if fname in sf_fields:
+            
+            # Determine the 'path' to the field value.
+            field_parts = sf_fields[fname].split('.')
+            if fname in sf_relationships.keys():
+                field_parts = sf_relationships[fname].split('.') + field_parts
+            
+            # Try to get a corresponding value from the record.
+            try:
+                value = valueFromRecord(record, field_parts)
+            except KeyError:
+                continue
+            
+            d[fname] = convertToSchemaValue(field, value)
+        elif fname in sf_relationships:
+            if ICollection.providedBy(field) and IObject.providedBy(field.value_type):
+                subschema = field.value_type.schema
+                subvalues = []
+                for subrecord in valueFromRecord(record, sf_relationships[fname].split('.')):
+                    subvalues.append(convertRecord(subrecord, subschema))
+                d[fname] = subvalues
+            else:
+                pass
+    return d
