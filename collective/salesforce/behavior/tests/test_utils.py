@@ -105,4 +105,5 @@ class TestUtils(unittest.TestCase):
         schema.setTaggedValue('salesforce.object', 'Contact')
         schema.setTaggedValue('salesforce.relationships', {'opp_roles': 'OpportunityContactRoles'})
         query = self._queryFromSchema(schema)
-        self.assertEqual('SELECT Contact.Id, (SELECT Id, Role, Account.Name FROM Contact.OpportunityContactRoles) FROM Contact', query)
+        self.assertEqual('SELECT Contact.Id, (SELECT Id, Account.Name, Role FROM OpportunityContactRoles) FROM Contact',
+                         query)

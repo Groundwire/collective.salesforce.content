@@ -2,7 +2,7 @@ from zope.schema.interfaces import ICollection, IObject
 from beatbox.python_client import QueryRecord, QueryRecordSet
 from collective.salesforce.behavior import logger
     
-def queryFromSchema(schema):
+def queryFromSchema(schema, relationship_name=None, add_prefix=True):
     """
     Given a schema tagged with Salesforce values, generate a query to return
     all the records for objects of that type.
@@ -14,40 +14,48 @@ def queryFromSchema(schema):
     sf_relationships = schema.queryTaggedValue('salesforce.relationships', {})
     
     if sf_object and (sf_fields or sf_relationships):
-        selects = ['%s.Id' % (sf_object)]
+        if add_prefix:
+            prefix = '%s.' % sf_object
+        else:
+            prefix = ''
+        selects = ['%sId' % prefix]
         for schema_field_name in schema:
             if schema_field_name in sf_fields.keys():
                 # Has both sf:field and sf:relationship
                 if schema_field_name in sf_relationships.keys():
-                    selects.append('(SELECT Id, %s FROM %s.%s)' % (
+                    selects.append('(SELECT Id, %s FROM %s%s)' % (
                         sf_fields[schema_field_name],
-                        sf_object,
+                        prefix,
                         sf_relationships[schema_field_name],
                     ))
                 # Has sf:field but not sf:relationship
                 else:
-                    selects.append('%s.%s' % (
-                        sf_object,
+                    selects.append('%s%s' % (
+                        prefix,
                         sf_fields[schema_field_name],
                     ))
             # Has sf:relationship but not sf:field
             elif schema_field_name in sf_relationships.keys():
+                field = schema[schema_field_name]
                 # Zope field is an collection whose value_type is IObject:
                 # build subquery based on the object schema
-                field = schema[schema_field_name]
                 if ICollection.providedBy(field) and IObject.providedBy(field.value_type):
-                    raise ValueError('Not implemented.')
+                    subquery = queryFromSchema(
+                        field.value_type.schema,
+                        relationship_name = sf_relationships[schema_field_name],
+                        add_prefix = False)
+                    selects.append('(%s)' % subquery)
                 # Otherwise just get the Ids
                 else:
-                    selects.append('(SELECT Id FROM %s.%s)' % (
-                        sf_object,
+                    selects.append('(SELECT Id FROM %s%s)' % (
+                        prefix,
                         sf_relationships[schema_field_name],
                     ))
 
         # Construct the main query.
         query = "SELECT %s FROM %s" % (
             ', '.join(selects),
-            sf_object
+            relationship_name or sf_object
         )
         if sf_criteria:
             query += " WHERE %s" % sf_criteria

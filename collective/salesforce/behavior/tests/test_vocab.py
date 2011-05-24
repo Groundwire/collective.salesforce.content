@@ -1,1 +1,0 @@
-from collective.salesforce.behavior import vocab
