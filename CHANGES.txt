@@ -4,6 +4,12 @@ Changelog
 0.1 (unreleased)
 ----------------
 
+* Fix import ordering issue by moving field handlers to meta.zcml.
+  [davisagli - 2011-05-25]
+
+* Add handler for custom subqueries.
+  [davisagli - 2011-05-25]
+
 * Fixed TextLine converter to handle datetimes.
   [davisagli - 2011-05-23]
 

@@ -1,0 +1,26 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser">
+  
+  <utility name="salesforce.object"
+    factory=".schema.SalesforceObjectMetadata" />
+
+  <utility name="salesforce.criteria"
+    factory=".schema.SalesforceCriteriaMetadata" />
+
+  <utility name="salesforce.container"
+    factory=".schema.SalesforceContainerMetadata" />
+
+  <utility name="salesforce.fields"
+    factory=".schema.SalesforceFieldMetadata" />
+
+  <utility name="salesforce.relationships"
+    factory=".schema.SalesforceRelationshipMetadata" />
+
+  <utility name="salesforce.converters"
+    factory=".schema.SalesforceConverterMetadata" />
+
+  <utility name="salesforce.subqueries"
+    factory=".schema.SalesforceSubqueryMetadata" />
+  
+</configure>
