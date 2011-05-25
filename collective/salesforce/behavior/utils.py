@@ -15,15 +15,19 @@ def queryFromSchema(schema, relationship_name=None, add_prefix=True):
     sf_criteria = schema.queryTaggedValue('salesforce.criteria', None)
     sf_fields = schema.queryTaggedValue('salesforce.fields', {})
     sf_relationships = schema.queryTaggedValue('salesforce.relationships', {})
+    sf_subqueries = schema.queryTaggedValue('salesforce.subqueries', {})
     
-    if sf_object and (sf_fields or sf_relationships):
+    if sf_object and (sf_fields or sf_relationships or sf_subqueries):
         if add_prefix:
             prefix = '%s.' % sf_object
         else:
             prefix = ''
         selects = ['%sId' % prefix]
         for schema_field_name in schema:
-            if schema_field_name in sf_fields.keys():
+            if schema_field_name in sf_subqueries:
+                # Has a custom subquery, which takes precedence
+                selects.append(sf_subqueries[schema_field_name])
+            elif schema_field_name in sf_fields.keys():
                 # Has both sf:field and sf:relationship
                 if schema_field_name in sf_relationships.keys():
                     selects.append('(SELECT %s FROM %s%s)' % (

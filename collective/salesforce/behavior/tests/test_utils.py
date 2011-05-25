@@ -108,3 +108,10 @@ class TestUtils(unittest.TestCase):
         self.assertEqual('SELECT Contact.Id, (SELECT Id, Account.Name, Role FROM OpportunityContactRoles '
                          'WHERE Active__c=true) FROM Contact',
                          query)
+
+    def test_queryFromSchema_custom_subquery(self):
+        schema = self._makeSchema()
+        schema.setTaggedValue('salesforce.object', 'Contact')
+        schema.setTaggedValue('salesforce.subqueries', {'scalar': '(SELECT foo FROM bar)'})
+        query = self._queryFromSchema(schema)
+        self.assertEqual('SELECT Contact.Id, (SELECT foo FROM bar) FROM Contact', query)

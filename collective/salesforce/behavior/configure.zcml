@@ -32,7 +32,10 @@
     
   <utility name="salesforce.converters"
     factory=".schema.SalesforceConverterMetadata" />
-    
+  
+  <utility name="salesforce.subqueries"
+    factory=".schema.SalesforceSubqueryMetadata" />
+  
   <adapter for="zope.schema.interfaces.IField"
     factory=".converters.DefaultValueConverter" />
       
