@@ -4,6 +4,9 @@ Changelog
 0.1 (unreleased)
 ----------------
 
+* Make sure ObjectCreatedEvent is notified for new objects.
+  [davisagli - 2011-05-25]
+
 * Fix import ordering issue by moving field handlers to meta.zcml.
   [davisagli - 2011-05-25]
 
