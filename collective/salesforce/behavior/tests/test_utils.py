@@ -79,7 +79,7 @@ class TestUtils(unittest.TestCase):
         # </schema>
         # 
         # subschema:
-        # <schema sf:object="OpportunityContactRole">
+        # <schema sf:object="OpportunityContactRole" sf:criteria="Active__c=true">
         #   <field name="role" type="zope.schema.TextLine"
         #          sf:field="Role" />
         #   <field name="org" type="zope.schema.TextLine"
@@ -100,9 +100,11 @@ class TestUtils(unittest.TestCase):
                 )
         
         subschema.setTaggedValue('salesforce.object', 'OpportunityContactRole')
+        subschema.setTaggedValue('salesforce.criteria', 'Active__c=true')
         subschema.setTaggedValue('salesforce.fields', {'role': 'Role', 'org': 'Account.Name'})
         schema.setTaggedValue('salesforce.object', 'Contact')
         schema.setTaggedValue('salesforce.relationships', {'opp_roles': 'OpportunityContactRoles'})
         query = self._queryFromSchema(schema)
-        self.assertEqual('SELECT Contact.Id, (SELECT Id, Account.Name, Role FROM OpportunityContactRoles) FROM Contact',
+        self.assertEqual('SELECT Contact.Id, (SELECT Id, Account.Name, Role FROM OpportunityContactRoles '
+                         'WHERE Active__c=true) FROM Contact',
                          query)
