@@ -4,6 +4,9 @@ from beatbox.python_client import QueryRecord, QueryRecordSet
 from collective.salesforce.behavior import logger
 from collective.salesforce.behavior.interfaces import ISalesforceValueConverter
 
+def prevent_dupe(l, value):
+    if value not in l:
+        l.append(value)
 
 def queryFromSchema(schema, relationship_name=None, add_prefix=True):
     """
@@ -26,18 +29,18 @@ def queryFromSchema(schema, relationship_name=None, add_prefix=True):
         for schema_field_name in schema:
             if schema_field_name in sf_subqueries:
                 # Has a custom subquery, which takes precedence
-                selects.append(sf_subqueries[schema_field_name])
+                prevent_dupe(selects, sf_subqueries[schema_field_name])
             elif schema_field_name in sf_fields.keys():
                 # Has both sf:field and sf:relationship
                 if schema_field_name in sf_relationships.keys():
-                    selects.append('(SELECT %s FROM %s%s)' % (
+                    prevent_dupe(selects, '(SELECT %s FROM %s%s)' % (
                         sf_fields[schema_field_name],
                         prefix,
                         sf_relationships[schema_field_name],
                     ))
                 # Has sf:field but not sf:relationship
                 else:
-                    selects.append('%s%s' % (
+                    prevent_dupe(selects, '%s%s' % (
                         prefix,
                         sf_fields[schema_field_name],
                     ))
@@ -51,7 +54,7 @@ def queryFromSchema(schema, relationship_name=None, add_prefix=True):
                         field.value_type.schema,
                         relationship_name = sf_relationships[schema_field_name],
                         add_prefix = False)
-                    selects.append('(%s)' % subquery)
+                    prevent_dupe(selects, '(%s)' % subquery)
                 # Otherwise not supported
                 else:
                     raise ValueError('sf:relationship may only be specified without '

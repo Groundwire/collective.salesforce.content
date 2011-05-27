@@ -31,6 +31,14 @@ class TestUtils(unittest.TestCase):
         schema.setTaggedValue('salesforce.fields', {'scalar': 'Name'})
         query = self._queryFromSchema(schema)
         self.assertEqual('SELECT Contact.Id, Contact.Name FROM Contact', query)
+        
+    def test_queryFromSchema_duplicate_select(self):
+        schema = self._makeSchema()
+        schema.setTaggedValue('salesforce.object', 'Contact')
+        schema.setTaggedValue('salesforce.fields', {'scalar': 'Name'})
+        schema.setTaggedValue('salesforce.fields', {'vector': 'Name'})
+        query = self._queryFromSchema(schema)
+        self.assertEqual('SELECT Contact.Id, Contact.Name FROM Contact', query)
 
     def test_queryFromSchema_simple_field_with_criteria(self):
         # <field type="zope.schema.TextLine" sf:field="Name" sf:criteria="IsTest__c=true" />

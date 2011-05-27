@@ -4,6 +4,9 @@ Changelog
 0.1 (unreleased)
 ----------------
 
+* Made it possible to have multiple schema fields use the same salesforce field.
+  [dextermilo - 2011-05-27]
+
 * Log SOQL queries at the DEBUG level.
   [davisagli - 2011-05-27]
 
