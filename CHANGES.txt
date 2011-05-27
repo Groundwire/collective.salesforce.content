@@ -4,6 +4,9 @@ Changelog
 0.1 (unreleased)
 ----------------
 
+* Log SOQL queries at the DEBUG level.
+  [davisagli - 2011-05-27]
+
 * Make sure ObjectCreatedEvent is notified for new objects.
   [davisagli - 2011-05-25]
 

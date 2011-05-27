@@ -34,6 +34,7 @@ class SFSync(BrowserView):
                     continue
                 if ISalesforceObject.__identifier__ in fti.behaviors:
                     query = self.getQueryFromType(fti)
+                    logger.debug('SOQL: %s' % query)
                     if query:
                         results = self.getResults(query)
                         if results:
