@@ -61,7 +61,11 @@ class SalesforceFieldMetadata(BaseSalesforceFieldMetadata):
 class SalesforceRelationshipMetadata(BaseSalesforceFieldMetadata):
     xml_attr = 'relationship'
     tag_key = 'salesforce.relationships'
-            
+
+class SalesforceSubqueryMetadata(BaseSalesforceFieldMetadata):
+    xml_attr = 'subquery'
+    tag_key = 'salesforce.subqueries'
+
 class SalesforceConverterMetadata(BaseSalesforceFieldMetadata):
     xml_attr = 'converter'
     tag_key = 'salesforce.converters'

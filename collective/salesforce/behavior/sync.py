@@ -2,7 +2,7 @@ import transaction
 import traceback
 from zope.component import createObject, getUtility
 from zope.event import notify
-from zope.lifecycleevent import modified
+from zope.lifecycleevent import modified, ObjectCreatedEvent
 from zope.publisher.browser import BrowserView
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.utils import getToolByName
@@ -13,6 +13,7 @@ from collective.salesforce.behavior.interfaces import ISalesforceObject, \
     ISalesforceObjectMarker
 from collective.salesforce.behavior.events import NotFoundInSalesforceEvent, \
     UpdatedFromSalesforceEvent
+
 
 class SFSync(BrowserView):
     """
@@ -33,6 +34,7 @@ class SFSync(BrowserView):
                     continue
                 if ISalesforceObject.__identifier__ in fti.behaviors:
                     query = self.getQueryFromType(fti)
+                    logger.debug('SOQL: %s' % query)
                     if query:
                         results = self.getResults(query)
                         if results:
@@ -123,7 +125,9 @@ class SFSync(BrowserView):
                 sfobj.updatePloneObject(record)
                 del sfid_map[record.Id]
             else:
-                sfobj = ISalesforceObject(createObject(fti.factory))
+                obj = createObject(fti.factory)
+                notify(ObjectCreatedEvent(obj))
+                sfobj = ISalesforceObject(obj)
                 sfobj.updatePloneObject(record)
                 sfobj.addToContainer()
                 

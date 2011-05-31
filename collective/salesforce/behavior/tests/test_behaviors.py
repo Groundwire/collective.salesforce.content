@@ -69,7 +69,7 @@ class TestSalesforceObject(unittest.TestCase):
         sfobj = self._makeOne()
         self.assertRaises(Exception, sfobj.getSalesforceRecord)
     
-    def test_updatePloneObject(self):
+    def test_updatePloneObject_simple_fields(self):
         from collective.salesforce.behavior.converters import TextLineValueConverter
         from zope.schema.interfaces import ITextLine
         provideAdapter(TextLineValueConverter, [ITextLine])
@@ -91,6 +91,90 @@ class TestSalesforceObject(unittest.TestCase):
         self.assertEqual('1234', sfobj.sf_object_id)
         self.assertEqual(u'Dracula', sfobj.context.title)
     
+    def test_updatePloneObject_lookup_field(self):
+        from collective.salesforce.behavior.converters import TextLineValueConverter
+        provideAdapter(TextLineValueConverter, [schema.interfaces.ITextLine])
+        
+        class IDummySchema(Interface):
+            title = schema.TextLine()
+        directlyProvides(IDummySchema, IContentType)
+        IDummySchema.setTaggedValue('salesforce.fields', {'title': 'Account.Name'})
+        sfobj = self._makeOne(schema = IDummySchema)
+        
+        from beatbox.python_client import QueryRecord
+        record = QueryRecord(
+            Id = '1234',
+            Account = QueryRecord(
+                Name = 'Hogwarts',
+                ),
+            )
+        
+        sfobj.updatePloneObject(record=record)
+        self.assertEqual(u'Hogwarts', sfobj.context.title)
+    
+    def test_updatePloneObject_relationship_field(self):
+        from collective.salesforce.behavior.converters import TextLineValueConverter
+        provideAdapter(TextLineValueConverter, [schema.interfaces.ITextLine])
+        from collective.salesforce.behavior.converters import ListValueConverter
+        provideAdapter(ListValueConverter, [schema.interfaces.IList])
+        
+        class IDummySchema(Interface):
+            roles = schema.List(value_type=schema.TextLine())
+        directlyProvides(IDummySchema, IContentType)
+        IDummySchema.setTaggedValue('salesforce.fields', {'roles': 'Role'})
+        IDummySchema.setTaggedValue('salesforce.relationships', {'roles': 'OpportunityContactRoles'})
+        sfobj = self._makeOne(schema = IDummySchema)
+        
+        from beatbox.python_client import QueryRecord, QueryRecordSet
+        record = QueryRecord(
+            Id = '1234',
+            OpportunityContactRoles = QueryRecordSet(
+                records = [QueryRecord(
+                    Role = 'Terminator',
+                    )],
+                done = True,
+                size = 1,
+                )
+            )
+        
+        sfobj.updatePloneObject(record=record)
+        self.assertEqual([u'Terminator'], sfobj.context.roles)
+    
+    def test_updatePloneObject_relationship_fields_to_list_of_objects(self):
+        from collective.salesforce.behavior.converters import TextLineValueConverter
+        provideAdapter(TextLineValueConverter, [schema.interfaces.ITextLine])
+        from collective.salesforce.behavior.converters import ListValueConverter
+        provideAdapter(ListValueConverter, [schema.interfaces.IList])
+        
+        class IDummyOppRoleSchema(Interface):
+            role = schema.TextLine()
+            org = schema.TextLine()
+        IDummyOppRoleSchema.setTaggedValue('salesforce.object', 'OpportunityRole')
+        IDummyOppRoleSchema.setTaggedValue('salesforce.fields', {'role': 'Role', 'org': 'Account.Name'})
+        class IDummyContactSchema(Interface):
+            roles = schema.List(value_type=schema.Object(schema=IDummyOppRoleSchema))
+        directlyProvides(IDummyContactSchema, IContentType)
+        IDummyContactSchema.setTaggedValue('salesforce.relationships', {'roles': 'OpportunityContactRoles'})
+        sfobj = self._makeOne(schema = IDummyContactSchema)
+        
+        from beatbox.python_client import QueryRecord, QueryRecordSet
+        record = QueryRecord(
+            Id = '1234',
+            OpportunityContactRoles = QueryRecordSet(
+                records = [QueryRecord(
+                    Role = 'Code Monkey',
+                    Account = QueryRecord(
+                        Name = 'Groundwire',
+                        ),
+                    )],
+                done = True,
+                size = 1,
+                )
+            )
+        
+        sfobj.updatePloneObject(record=record)
+        self.assertEqual([{'org': u'Groundwire', 'role': u'Code Monkey'}], sfobj.context.roles)
+    
     def test_updatePloneObject_no_record(self):
         sfobj = self._makeOne()
         self.assertRaises(Exception, sfobj.updatePloneObject)
@@ -100,7 +184,7 @@ class TestSalesforceObject(unittest.TestCase):
         schema.setTaggedValue('salesforce.container', 'foo')
         sfobj = self._makeOne(schema = schema)
         expected_container = object()
-        site = self._makeSite(expected_container)
+        self._makeSite(expected_container)
 
         container = sfobj.getContainer()
         self.assertTrue(container is expected_container)
@@ -110,7 +194,7 @@ class TestSalesforceObject(unittest.TestCase):
         schema.setTaggedValue('salesforce.container', '/foo')
         sfobj = self._makeOne(schema = schema)
         expected_container = object()
-        site = self._makeSite(expected_container)
+        self._makeSite(expected_container)
 
         container = sfobj.getContainer()
         self.assertTrue(container is expected_container)
@@ -140,7 +224,7 @@ class TestSalesforceObject(unittest.TestCase):
         schema.setTaggedValue('salesforce.container', 'foo')
         sfobj = self._makeOne(schema = schema)
         expected_container = object()
-        site = self._makeSite(expected_container = None)
+        self._makeSite(expected_container = None)
 
         container = sfobj.getContainer(default=expected_container)
         self.assertTrue(container is expected_container)

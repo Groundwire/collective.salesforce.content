@@ -2,15 +2,16 @@ from Acquisition import aq_base, aq_inner
 from zope.app.content import queryContentType
 from zope.app.component.hooks import getSite
 from zope.app.container.interfaces import INameChooser
-from zope.component import adapts, getAdapter
+from zope.component import adapts
 from zope.interface import implements
 from five import grok
 from plone.indexer import indexer
 from plone.dexterity.interfaces import IDexterityContent
 from plone.memoize import instance
 from collective.salesforce.behavior.interfaces import ISalesforceObject, \
-    ISalesforceObjectMarker, ISalesforceValueConverter
-from collective.salesforce.behavior.utils import valueFromRecord
+    ISalesforceObjectMarker
+from collective.salesforce.behavior.utils import convertRecord
+
 
 class SalesforceObject(object):
     implements(ISalesforceObject)
@@ -71,34 +72,9 @@ class SalesforceObject(object):
         assert schema is not None, "Schema was None; does your schema " + \
             "need to provide zope.app.content.interfaces.IContentType?"
         
-        sf_fields = self._queryTaggedValue('salesforce.fields', {})
-        sf_relationships = self._queryTaggedValue('salesforce.relationships', {})
-        sf_converters = self._queryTaggedValue('salesforce.converters', {})
-        
-        for field in schema:
-            if field in sf_fields.keys():
-                
-                # Determine the 'path' to the field value.
-                field_parts = sf_fields[field].split('.')
-                if field in sf_relationships.keys():
-                    field_parts = sf_relationships[field].split('.') + field_parts
-                
-                # Try to get a corresponding value from the record.
-                try:
-                    value = valueFromRecord(record, field_parts)
-                except KeyError:
-                    continue
-                
-                # If we found a value, convert it to a schema value and
-                # set it on the object.
-                converter_name = sf_converters.get(field, u'')
-                converter = getAdapter(
-                    schema[field],
-                    interface=ISalesforceValueConverter,
-                    name=converter_name,
-                )
-                setattr(self.context, field, converter.toSchemaValue(value))
-                    
+        for k, v in convertRecord(record, schema).items():
+            setattr(self.context, k, v)
+
     def getContainer(self, default=None):
         """
         Get the container object where new objects from Salesforce should
