@@ -31,7 +31,7 @@
     
   <adapter for="zope.schema.interfaces.IList"
     factory=".converters.ListValueConverter" />
-    
+  
   <browser:page
     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
     name="sf_sync"

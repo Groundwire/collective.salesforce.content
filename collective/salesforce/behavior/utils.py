@@ -116,6 +116,7 @@ def convertRecord(record, schema):
     """
     sf_fields = schema.queryTaggedValue('salesforce.fields', {})
     sf_relationships = schema.queryTaggedValue('salesforce.relationships', {})
+    sf_subqueries = schema.queryTaggedValue('salesforce.subqueries', {})
     
     d = {}
     for fname in schema:
@@ -143,4 +144,10 @@ def convertRecord(record, schema):
                 d[fname] = subvalues
             else:
                 pass
+        elif fname in sf_subqueries:
+            # custom query, we don't know how to find the relevant value on
+            # the record so we just give the converter the whole record and
+            # let it do its thing.
+            # (Things will blow up if there isn't a custom converter!)
+            d[fname] = convertToSchemaValue(field, record)
     return d
