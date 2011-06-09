@@ -1,16 +1,18 @@
 import transaction
 import traceback
 from zope.component import createObject, getUtility
+from zope.interface import alsoProvides
 from zope.event import notify
-from zope.lifecycleevent import modified, ObjectCreatedEvent
+from zope.lifecycleevent import ObjectCreatedEvent, ObjectModifiedEvent
 from zope.publisher.browser import BrowserView
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.utils import getToolByName
 from plone.dexterity.interfaces import IDexterityFTI
 from collective.salesforce.behavior import logger
 from collective.salesforce.behavior.utils import queryFromSchema
-from collective.salesforce.behavior.interfaces import ISalesforceObject, \
-    ISalesforceObjectMarker
+from collective.salesforce.behavior.interfaces import ISalesforceObject
+from collective.salesforce.behavior.interfaces import ISalesforceObjectMarker
+from collective.salesforce.behavior.interfaces import IModifiedViaSalesforceSync
 from collective.salesforce.behavior.events import NotFoundInSalesforceEvent, \
     UpdatedFromSalesforceEvent
 
@@ -131,8 +133,13 @@ class SFSync(BrowserView):
                 sfobj.updatePloneObject(record)
                 sfobj.addToContainer()
                 
-            # Reindex the object.
-            modified(sfobj.context)
+            # Trigger ObjectModifiedEvent to reindex the object.
+            # We mark it so that handlers can avoid taking action when
+            # objects are updated in this way (such as a handler that
+            # writes back to Salesforce).
+            event = ObjectModifiedEvent(sfobj.context)
+            alsoProvides(event, IModifiedViaSalesforceSync)
+            notify(event)
             
             # Send an UpdatedFromSalesforce event.
             notify(UpdatedFromSalesforceEvent(sfobj.context))

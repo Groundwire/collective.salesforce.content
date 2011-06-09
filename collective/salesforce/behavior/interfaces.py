@@ -82,3 +82,8 @@ class IRejectNotFound(Interface):
     Marker interface to indicate that this object should be rejected (in the
     workflow sense) if it is not found during a Salesforce sync.
     """
+
+class IModifiedViaSalesforceSync(Interface):
+    """
+    Marker interface for ObjectModified events triggered by the Salesforce sync.
+    """
