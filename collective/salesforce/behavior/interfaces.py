@@ -82,6 +82,12 @@ class IRejectNotFound(Interface):
     Marker interface to indicate that this object should be rejected (in the
     workflow sense) if it is not found during a Salesforce sync.
     """
+    
+class IDeleteNotFound(Interface):
+    """
+    Marker interface to indicate that this object should be deleted
+    from Plone if it is not found during a Salesforce sync.
+    """
 
 class IModifiedViaSalesforceSync(Interface):
     """

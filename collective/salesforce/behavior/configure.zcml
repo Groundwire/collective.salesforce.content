@@ -71,6 +71,13 @@
     for="plone.dexterity.interfaces.IDexterityContent"
     />
     
+  <plone:behavior
+    title="Salesforce Object: Delete Not Found Objects"
+    description="This object should be deleted if it is not found in Salesforce during a sync."
+    provides=".interfaces.IDeleteNotFound"
+    for="plone.dexterity.interfaces.IDexterityContent"
+    />
+    
   <genericsetup:registerProfile
     name="default"
     title="Salesforce Behaviors for Dexterity Content Types"

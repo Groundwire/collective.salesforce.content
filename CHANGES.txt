@@ -4,6 +4,10 @@ Changelog
 0.1 (unreleased)
 ----------------
 
+* Added a behavior to Delete objects from Plone when they aren't found in
+  Salesforce.
+  [dextermilo - 2011-06-13]
+
 * Put a marker on the ObjectModifiedEvent fired when an object is synced,
   so that handlers can distinguish modifications made by the syncer.
   [davisagli - 2011-06-09]
