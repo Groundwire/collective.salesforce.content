@@ -22,11 +22,15 @@ class SalesforceObject(object):
     
     def _get_sf_object_id(self):
         return getattr(self.context, 'sf_object_id', None)
-        
     def _set_sf_object_id(self, sf_id):
         self.context.sf_object_id = sf_id
-        
     sf_object_id = property(_get_sf_object_id, _set_sf_object_id)
+
+    def _get_sf_data_digest(self):
+        return getattr(self.context, 'sf_data_digest', None)
+    def _set_sf_data_digest(self, digest):
+        self.context.sf_data_digest = digest
+    sf_data_digest = property(_get_sf_data_digest, _set_sf_data_digest)
     
     @instance.memoize
     def _getSchema(self):

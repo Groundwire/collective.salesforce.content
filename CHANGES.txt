@@ -4,6 +4,13 @@ Changelog
 0.1 (unreleased)
 ----------------
 
+* Add some additional debug logging.
+  [davisagli - 2011-07-08]
+
+* Use a digest of the record returned from Salesforce to avoid unnecessary
+  reindexing.
+  [davisagli - 2011-07-08]
+
 * Added a behavior to Delete objects from Plone when they aren't found in
   Salesforce.
   [dextermilo - 2011-06-13]

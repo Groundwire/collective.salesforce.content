@@ -1,3 +1,4 @@
+import time
 import transaction
 import traceback
 from zope.component import createObject, getUtility
@@ -15,6 +16,12 @@ from collective.salesforce.behavior.interfaces import ISalesforceObjectMarker
 from collective.salesforce.behavior.interfaces import IModifiedViaSalesforceSync
 from collective.salesforce.behavior.events import NotFoundInSalesforceEvent, \
     UpdatedFromSalesforceEvent
+
+
+try:
+    from hashlib import sha1
+except ImportError:
+    from sha import sha as sha1
 
 
 class SFSync(BrowserView):
@@ -90,12 +97,14 @@ class SFSync(BrowserView):
         sfbc = getToolByName(self.context, 'portal_salesforcebaseconnector')
                 
         results = sfbc.query(query)
-        logger.debug('%s records found.' % results['size'])
+        size = results['size']
+        logger.debug('%s records found.' % size)
         
         for result in results:
             yield result
         while not results['done']:
             results = sfbc.queryMore(results['queryLocator'])
+            logger.debug('Retrieved %s of %s records from Salesforce.' % (len(results), size))
             for result in results:
                 yield result
         
@@ -105,6 +114,7 @@ class SFSync(BrowserView):
         Plone objects.
         """
         
+        time_start = time.time()
         schema = fti.lookupSchema()
         
         catalog = getToolByName(self.context, 'portal_catalog')
@@ -121,18 +131,28 @@ class SFSync(BrowserView):
         sfid_map = dict([(b.sf_object_id, b) for b in catalog.searchResults(query) \
             if b.sf_object_id])
         
+        objects_updated_count = 0
         for i, record in enumerate(records):
+            digest = sha1(str(record)).digest()
             if record.Id in sfid_map.keys():
                 sfobj = ISalesforceObject(sfid_map[record.Id].getObject())
-                sfobj.updatePloneObject(record)
                 del sfid_map[record.Id]
+            
+                # skip updating items that haven't changed, based on the digest
+                if digest == sfobj.sf_data_digest:
+                    continue
+            
+                sfobj.updatePloneObject(record)
             else:
                 obj = createObject(fti.factory)
                 notify(ObjectCreatedEvent(obj))
                 sfobj = ISalesforceObject(obj)
                 sfobj.updatePloneObject(record)
                 sfobj.addToContainer()
-                
+            
+            objects_updated_count += 1
+            sfobj.sf_data_digest = digest
+            
             # Trigger ObjectModifiedEvent to reindex the object.
             # We mark it so that handlers can avoid taking action when
             # objects are updated in this way (such as a handler that
@@ -145,8 +165,9 @@ class SFSync(BrowserView):
             notify(UpdatedFromSalesforceEvent(sfobj.context))
                                     
             # Commit periodically.
-            if not i % 10:
+            if not objects_updated_count % 10:
                 transaction.commit()
+                logger.debug('Committed updates (%s)' % i)
         
         # Send NotFoundInSalesforce events for objects that weren't
         # returned by the Salesforce query.
@@ -157,3 +178,6 @@ class SFSync(BrowserView):
             # Commit periodically.
             if not i % 10:
                 transaction.commit()
+
+        time_elapsed = time.time() - time_start
+        logger.debug('Sync completed in %s seconds. Have a nice day.' % time_elapsed)
