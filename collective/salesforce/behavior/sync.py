@@ -16,6 +16,7 @@ from collective.salesforce.behavior.interfaces import ISalesforceObjectMarker
 from collective.salesforce.behavior.interfaces import IModifiedViaSalesforceSync
 from collective.salesforce.behavior.events import NotFoundInSalesforceEvent, \
     UpdatedFromSalesforceEvent
+from ZODB.POSException import ConflictError
 
 
 try:
@@ -166,8 +167,14 @@ class SFSync(BrowserView):
                                     
             # Commit periodically.
             if not objects_updated_count % 10:
-                transaction.commit()
-                logger.debug('Committed updates (%s)' % i)
+                try:
+                    transaction.commit()
+                    logger.debug('Committed updates (%s)' % i)
+                except ConflictError:
+                    # if there was a conflict subsequent commits will fail;
+                    # so explicitly start a new transaction
+                    logger.exception('Conflict on updates (%s)' % i)
+                    transaction.begin()
         
         # Send NotFoundInSalesforce events for objects that weren't
         # returned by the Salesforce query.

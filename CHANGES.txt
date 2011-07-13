@@ -4,6 +4,10 @@ Changelog
 0.1 (unreleased)
 ----------------
 
+* Prevent ConflictErrors during sync from causing the entire sync request to
+  retry.
+  [davisagli - 2011-07-12]
+
 * Add some additional debug logging.
   [davisagli - 2011-07-08]
 
