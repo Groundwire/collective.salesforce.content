@@ -8,7 +8,7 @@ def prevent_dupe(l, value):
     if value not in l:
         l.append(value)
 
-def queryFromSchema(schema, relationship_name=None, add_prefix=True):
+def queryFromSchema(schema, relationship_name=None, add_prefix=True, sf_object_id=None):
     """
     Given a schema tagged with Salesforce values, generate a query to return
     all the records for objects of that type.
@@ -67,7 +67,11 @@ def queryFromSchema(schema, relationship_name=None, add_prefix=True):
         )
         if sf_criteria:
             query += " WHERE %s" % sf_criteria
-            
+            if sf_object_id is not None:
+                query += " AND Id='%s'" % sf_object_id
+        elif sf_object_id is not None:
+            query += " WHERE Id='%s'" % sf_object_id
+
         logger.debug(query)
         return query
         

@@ -4,6 +4,10 @@ Changelog
 0.1 (unreleased)
 ----------------
 
+* Add option to sync a single object specified by Salesforce Id from the control
+  panel.
+  [davisagli - 2011-09-12]
+
 * Prevent ConflictErrors during sync from causing the entire sync request to
   retry.
   [davisagli - 2011-07-12]

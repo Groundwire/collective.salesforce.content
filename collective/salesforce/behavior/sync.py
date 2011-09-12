@@ -30,7 +30,7 @@ class SFSync(BrowserView):
     Synchronizes Plone objects with their corresponding Salesforce objects.
     """
     
-    def __call__(self, catch_errors=False, email=None, types=[]):
+    def __call__(self, catch_errors=False, email=None, types=[], sf_object_id=None):
         """
         Perform the synchronization.
         """
@@ -43,12 +43,12 @@ class SFSync(BrowserView):
                 if types and not fti.__name__ in types:
                     continue
                 if ISalesforceObject.__identifier__ in fti.behaviors:
-                    query = self.getQueryFromType(fti)
+                    query = self.getQueryFromType(fti, sf_object_id=sf_object_id)
                     logger.debug('SOQL: %s' % query)
                     if query:
                         results = self.getResults(query)
                         if results:
-                            self.syncPloneObjects(fti, results)
+                            self.syncPloneObjects(fti, results, sf_object_id=sf_object_id)
         except:
             # If the catch_errors flag is set, we try to handle the error 
             # gracefully. This is mostly useful when using sf_sync
@@ -82,13 +82,13 @@ class SFSync(BrowserView):
             if IDexterityFTI.providedBy(fti):
                 yield fti
                         
-    def getQueryFromType(self, fti):
+    def getQueryFromType(self, fti, sf_object_id=None):
         """
         Sync objects created from this FTI.
         """
         
         schema = fti.lookupSchema()
-        return queryFromSchema(schema)
+        return queryFromSchema(schema, sf_object_id=sf_object_id)
                                 
     def getResults(self, query):
         """
@@ -109,7 +109,7 @@ class SFSync(BrowserView):
             for result in results:
                 yield result
         
-    def syncPloneObjects(self, fti, records):
+    def syncPloneObjects(self, fti, records, sf_object_id=None):
         """
         Given the results from Salesforce, update or create the appropriate
         Plone objects.
@@ -178,13 +178,16 @@ class SFSync(BrowserView):
         
         # Send NotFoundInSalesforce events for objects that weren't
         # returned by the Salesforce query.
-        for i, item in enumerate(sfid_map.items()):
-            sf_id, brain = item
-            notify(NotFoundInSalesforceEvent(brain.getObject()))
+        # We skip this if an sf_object_id was supplied, because that means
+        # we intentionally didn't find all of the objects.
+        if sf_object_id is None:
+            for i, item in enumerate(sfid_map.items()):
+                sf_id, brain = item
+                notify(NotFoundInSalesforceEvent(brain.getObject()))
             
-            # Commit periodically.
-            if not i % 10:
-                transaction.commit()
+                # Commit periodically.
+                if not i % 10:
+                    transaction.commit()
 
         time_elapsed = time.time() - time_start
         logger.debug('Sync completed in %s seconds. Have a nice day.' % time_elapsed)
