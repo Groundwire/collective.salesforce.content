@@ -5,7 +5,7 @@ version = '1.0b1'
 setup(name='collective.salesforce.content',
       version=version,
       description="Behaviors for creating Dexterity content types that integrate with Salesforce.",
-      long_description=open("README.txt").read() + "\n" + open("CHANGES.txt").read(),
+      long_description=open("README.rst").read() + "\n" + open("CHANGES.txt").read(),
       classifiers=[
         "Framework :: Plone",
         "Programming Language :: Python",

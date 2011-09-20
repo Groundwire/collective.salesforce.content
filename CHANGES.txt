@@ -4,6 +4,9 @@ Changelog
 0.1 (unreleased)
 ----------------
 
+* Install a Salesforce base connector when the package is installed.
+  [davisagli - 2011-09-20]
+
 * Rename package from collective.salesforce.behavior to 
   collective.salesforce.content.
   [davisagli - 2011-09-20]

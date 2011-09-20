@@ -26,7 +26,11 @@ def addCatalogIndexes(context):
     if added:
         logger.info("Indexing new indexes %s.", ', '.join(added))
         catalog.manage_reindexIndex(ids=added)
-        
+
+def setUpSalesforce(portal):
+    if 'portal_salesforcebaseconnector' not in portal:
+        portal.manage_addProduct['salesforcebaseconnector'].manage_addTool('Salesforce Base Connector', None)
+
 def import_various(context):
     """
     Import step for configuration that is not handled in xml files.
@@ -36,3 +40,4 @@ def import_various(context):
     if context.readDataFile('collective-salesforce-content-various.txt') is not None:
         portal = context.getSite()
         addCatalogIndexes(portal)
+        setUpSalesforce(portal)
