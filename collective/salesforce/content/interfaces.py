@@ -73,20 +73,19 @@ class IUpdatedFromSalesforceEvent(IObjectEvent):
 
 class IPublishUpdated(Interface):
     """
-    Marker interface to indicate that this object should be in the published
-    state after it is updated from Salesforce during a sync.
+    Causes an object to be published after it is updated from Salesforce during a sync.
     """
 
 class IRejectNotFound(Interface):
     """
-    Marker interface to indicate that this object should be rejected (in the
-    workflow sense) if it is not found during a Salesforce sync.
+    Causes an item to be rejected (in the workflow sense, i.e. made private) if
+    it is not found during a Salesforce sync.
     """
     
 class IDeleteNotFound(Interface):
     """
-    Marker interface to indicate that this object should be deleted
-    from Plone if it is not found during a Salesforce sync.
+    Causes an item with this behavior to be deleted from Plone if it is not
+    found during a Salesforce sync.
     """
 
 class IModifiedViaSalesforceSync(Interface):
