@@ -48,19 +48,29 @@ Perform custom actions when objects are synced, or no longer synced
 
 Two events may be raised for an object during sync:
 
-.. autoclass:: collective.salesforce.content.events.NotFoundInSalesforceEvent
+``collective.salesforce.content.events.NotFoundInSalesforceEvent``
 
-   There is an included, optional behavior which handles this event:
+  An object event that indicates that this object was not returned by
+  Salesforce when its Dexterity type was synchronized.
 
-   .. autointerface:: collective.salesforce.content.interfaces.IPublishUpdated
+  There is an included, optional behavior which handles this event:
 
-.. autoclass:: collective.salesforce.content.events.UpdatedFromSalesforceEvent
+  ``collective.salesforce.content.interfaces.IPublishUpdated``
+    Causes an object to be published after it is updated from Salesforce during a sync.
 
-   There are optional behaviors which handle this event:
+``collective.salesforce.content.events.UpdatedFromSalesforceEvent``
+
+  An object event that indicates that this object was updated from Salesforce.
+  
+  There are optional behaviors which handle this event:
    
-   .. autointerface:: collective.salesforce.content.interfaces.IDeleteNotFound
+  ``collective.salesforce.content.interfaces.IDeleteNotFound``
+    Causes an item with this behavior to be deleted from Plone if it is not
+    found during a Salesforce sync.
 
-   .. autointerface:: collective.salesforce.content.interfaces.IRejectNotFound
+  ``collective.salesforce.content.interfaces.IRejectNotFound``
+    Causes an item to be rejected (in the workflow sense, i.e. made private) if
+    it is not found during a Salesforce sync.
 
 Sync objects in a particular order
 ----------------------------------
