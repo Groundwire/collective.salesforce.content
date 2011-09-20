@@ -9,12 +9,12 @@ from zope.publisher.browser import BrowserView
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.utils import getToolByName
 from plone.dexterity.interfaces import IDexterityFTI
-from collective.salesforce.behavior import logger
-from collective.salesforce.behavior.utils import queryFromSchema
-from collective.salesforce.behavior.interfaces import ISalesforceObject
-from collective.salesforce.behavior.interfaces import ISalesforceObjectMarker
-from collective.salesforce.behavior.interfaces import IModifiedViaSalesforceSync
-from collective.salesforce.behavior.events import NotFoundInSalesforceEvent, \
+from collective.salesforce.content import logger
+from collective.salesforce.content.utils import queryFromSchema
+from collective.salesforce.content.interfaces import ISalesforceObject
+from collective.salesforce.content.interfaces import ISalesforceObjectMarker
+from collective.salesforce.content.interfaces import IModifiedViaSalesforceSync
+from collective.salesforce.content.events import NotFoundInSalesforceEvent, \
     UpdatedFromSalesforceEvent
 from ZODB.POSException import ConflictError
 

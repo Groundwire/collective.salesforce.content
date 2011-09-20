@@ -7,7 +7,7 @@ class TestDefaultValueConverter(unittest.TestCase):
         from zope.schema import ASCIILine
         field = ASCIILine()
         
-        from collective.salesforce.behavior.converters import DefaultValueConverter
+        from collective.salesforce.content.converters import DefaultValueConverter
         return DefaultValueConverter(field)
     
     def test_toSchemaValue(self):
@@ -28,7 +28,7 @@ class TestTextLineValueConverter(unittest.TestCase):
         from zope.schema import TextLine
         field = TextLine()
         
-        from collective.salesforce.behavior.converters import TextLineValueConverter
+        from collective.salesforce.content.converters import TextLineValueConverter
         return TextLineValueConverter(field)
     
     def test_toSchemaValue(self):
@@ -59,7 +59,7 @@ class TestRichTextValueConverter(unittest.TestCase):
         from plone.app.textfield import RichText
         field = RichText()
         
-        from collective.salesforce.behavior.converters import RichTextValueConverter
+        from collective.salesforce.content.converters import RichTextValueConverter
         return RichTextValueConverter(field)
     
     def test_toSchemaValue(self):

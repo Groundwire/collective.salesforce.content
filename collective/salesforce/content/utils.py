@@ -1,8 +1,8 @@
 from zope.component import getAdapter
 from zope.schema.interfaces import ICollection, IObject
 from beatbox.python_client import QueryRecord, QueryRecordSet
-from collective.salesforce.behavior import logger
-from collective.salesforce.behavior.interfaces import ISalesforceValueConverter
+from collective.salesforce.content import logger
+from collective.salesforce.content.interfaces import ISalesforceValueConverter
 
 def prevent_dupe(l, value):
     if value not in l:

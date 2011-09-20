@@ -1,7 +1,7 @@
 from zope.component import getAdapter
 from zope.interface import implements
 from plone.app.textfield.value import RichTextValue
-from collective.salesforce.behavior.interfaces import ISalesforceValueConverter
+from collective.salesforce.content.interfaces import ISalesforceValueConverter
         
 class DefaultValueConverter(object):
     implements(ISalesforceValueConverter)

@@ -16,7 +16,7 @@ class TestUtils(unittest.TestCase):
         return MySchema
     
     def _queryFromSchema(self, query):
-        from collective.salesforce.behavior.utils import queryFromSchema
+        from collective.salesforce.content.utils import queryFromSchema
         return queryFromSchema(query)
     
     def test_queryFromSchema_no_tagged_values(self):

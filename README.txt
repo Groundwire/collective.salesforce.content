@@ -1,7 +1,7 @@
 Introduction
 ============
 
-collective.salesforce.behavior provides a behavior and related tools for
+collective.salesforce.content provides a behavior and related tools for
 creating Salesforce-enabled Dexterity content types. These features are
 currently implemented:
 

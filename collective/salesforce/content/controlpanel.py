@@ -3,7 +3,7 @@ from z3c.form import button
 from z3c.form.form import Form
 from plone.directives import form
 from plone.autoform.form import AutoExtensibleForm
-from collective.salesforce.behavior import _
+from collective.salesforce.content import _
 
 
 class ISalesforceBehaviorControlPanel(form.Schema):
@@ -15,7 +15,7 @@ class ISalesforceBehaviorControlPanel(form.Schema):
     ftis = schema.List(
         title=_(u'Types to Synchronize'),
         description=_(u'Select the content types to synchronize with Salesforce.'),
-        value_type=schema.Choice(vocabulary='collective.salesforce.behavior.Types'),
+        value_type=schema.Choice(vocabulary='collective.salesforce.content.Types'),
         required = True,
     )
     
@@ -34,7 +34,7 @@ class SalesforceBehaviorControlPanel(AutoExtensibleForm, Form):
     """
     
     schema = ISalesforceBehaviorControlPanel
-    label = _(u'Salesforce Behavior')
+    label = _(u'Salesforce Content')
     ignoreContext = True
     
     @button.buttonAndHandler(_(u'Synchronize Now'))

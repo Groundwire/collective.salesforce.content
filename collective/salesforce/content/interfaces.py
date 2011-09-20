@@ -3,9 +3,9 @@ from zope.component.interfaces import IObjectEvent
 from zope.interface import Interface
 from zope.publisher.interfaces.browser import IDefaultBrowserLayer
 
-class ISalesforceBehaviorLayer(IDefaultBrowserLayer):
+class ISalesforceContentLayer(IDefaultBrowserLayer):
     """
-    Browser layer for collective.salesforce.behavior.
+    Browser layer for collective.salesforce.content.
     """
 
 class ISalesforceObjectMarker(Interface):

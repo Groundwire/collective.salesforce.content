@@ -3,11 +3,11 @@ from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 from plone.dexterity.interfaces import IDexterityFTI
 from five import grok
-from collective.salesforce.behavior.interfaces import ISalesforceObject
+from collective.salesforce.content.interfaces import ISalesforceObject
 
 class TypesVocabulary(grok.GlobalUtility):
     grok.implements(IVocabularyFactory)
-    grok.name('collective.salesforce.behavior.Types')
+    grok.name('collective.salesforce.content.Types')
 
     def __call__(self, context):
         ftis = getAllUtilitiesRegisteredFor(IDexterityFTI)

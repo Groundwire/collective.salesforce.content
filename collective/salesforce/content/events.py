@@ -1,6 +1,6 @@
 from zope.component.interfaces import ObjectEvent
 from zope.interface import implements
-from collective.salesforce.behavior.interfaces import \
+from collective.salesforce.content.interfaces import \
     INotFoundInSalesforceEvent, IUpdatedFromSalesforceEvent
 
 class NotFoundInSalesforceEvent(ObjectEvent):

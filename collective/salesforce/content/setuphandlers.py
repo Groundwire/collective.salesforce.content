@@ -1,5 +1,5 @@
 from Products.CMFCore.utils import getToolByName
-from collective.salesforce.behavior import logger
+from collective.salesforce.content import logger
 
 def addCatalogIndexes(context):
     """
@@ -8,7 +8,7 @@ def addCatalogIndexes(context):
 
     setup = getToolByName(context, 'portal_setup')
     setup.runImportStepFromProfile(
-        'profile-collective.salesforce.behavior:default', 'catalog')
+        'profile-collective.salesforce.content:default', 'catalog')
 
     catalog = getToolByName(context, 'portal_catalog')
     indexes = catalog.indexes()
@@ -33,6 +33,6 @@ def import_various(context):
     """
     
     # Only run step if a flag file is present
-    if context.readDataFile('collective-salesforce-behavior-various.txt') is not None:
+    if context.readDataFile('collective-salesforce-content-various.txt') is not None:
         portal = context.getSite()
         addCatalogIndexes(portal)

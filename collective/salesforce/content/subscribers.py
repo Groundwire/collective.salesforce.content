@@ -1,7 +1,7 @@
 from Products.CMFCore.utils import getToolByName
 from Acquisition import aq_parent, aq_inner
 from five import grok
-from collective.salesforce.behavior.interfaces import \
+from collective.salesforce.content.interfaces import \
     IUpdatedFromSalesforceEvent, INotFoundInSalesforceEvent, \
     IPublishUpdated, IRejectNotFound, IDeleteNotFound
     

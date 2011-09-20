@@ -8,9 +8,9 @@ from five import grok
 from plone.indexer import indexer
 from plone.dexterity.interfaces import IDexterityContent
 from plone.memoize import instance
-from collective.salesforce.behavior.interfaces import ISalesforceObject, \
+from collective.salesforce.content.interfaces import ISalesforceObject, \
     ISalesforceObjectMarker
-from collective.salesforce.behavior.utils import convertRecord
+from collective.salesforce.content.utils import convertRecord
 
 
 class SalesforceObject(object):

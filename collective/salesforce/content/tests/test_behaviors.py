@@ -35,7 +35,7 @@ class TestSalesforceObject(unittest.TestCase):
                 implements(schema)
             context = DummyContent()
         
-        from collective.salesforce.behavior.behaviors import SalesforceObject
+        from collective.salesforce.content.behaviors import SalesforceObject
         return SalesforceObject(context)
     
     def test_sf_object_id_setter(self):
@@ -70,7 +70,7 @@ class TestSalesforceObject(unittest.TestCase):
         self.assertRaises(Exception, sfobj.getSalesforceRecord)
     
     def test_updatePloneObject_simple_fields(self):
-        from collective.salesforce.behavior.converters import TextLineValueConverter
+        from collective.salesforce.content.converters import TextLineValueConverter
         from zope.schema.interfaces import ITextLine
         provideAdapter(TextLineValueConverter, [ITextLine])
         
@@ -92,7 +92,7 @@ class TestSalesforceObject(unittest.TestCase):
         self.assertEqual(u'Dracula', sfobj.context.title)
     
     def test_updatePloneObject_lookup_field(self):
-        from collective.salesforce.behavior.converters import TextLineValueConverter
+        from collective.salesforce.content.converters import TextLineValueConverter
         provideAdapter(TextLineValueConverter, [schema.interfaces.ITextLine])
         
         class IDummySchema(Interface):
@@ -113,9 +113,9 @@ class TestSalesforceObject(unittest.TestCase):
         self.assertEqual(u'Hogwarts', sfobj.context.title)
     
     def test_updatePloneObject_relationship_field(self):
-        from collective.salesforce.behavior.converters import TextLineValueConverter
+        from collective.salesforce.content.converters import TextLineValueConverter
         provideAdapter(TextLineValueConverter, [schema.interfaces.ITextLine])
-        from collective.salesforce.behavior.converters import ListValueConverter
+        from collective.salesforce.content.converters import ListValueConverter
         provideAdapter(ListValueConverter, [schema.interfaces.IList])
         
         class IDummySchema(Interface):
@@ -141,9 +141,9 @@ class TestSalesforceObject(unittest.TestCase):
         self.assertEqual([u'Terminator'], sfobj.context.roles)
     
     def test_updatePloneObject_relationship_fields_to_list_of_objects(self):
-        from collective.salesforce.behavior.converters import TextLineValueConverter
+        from collective.salesforce.content.converters import TextLineValueConverter
         provideAdapter(TextLineValueConverter, [schema.interfaces.ITextLine])
-        from collective.salesforce.behavior.converters import ListValueConverter
+        from collective.salesforce.content.converters import ListValueConverter
         provideAdapter(ListValueConverter, [schema.interfaces.IList])
         
         class IDummyOppRoleSchema(Interface):

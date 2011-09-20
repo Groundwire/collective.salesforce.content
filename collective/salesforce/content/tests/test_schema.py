@@ -10,7 +10,7 @@ SF_NAMESPACE = "http://namespaces.plone.org/salesforce/schema"
 class TestSalesforceObjectMetadata(unittest.TestCase):
     
     def _makeOne(self):
-        from collective.salesforce.behavior.schema import SalesforceObjectMetadata
+        from collective.salesforce.content.schema import SalesforceObjectMetadata
         return SalesforceObjectMetadata()
 
     def test_read(self):
@@ -42,7 +42,7 @@ class TestSalesforceObjectMetadata(unittest.TestCase):
 class TestSalesforceFieldMetadata(unittest.TestCase):
 
     def _makeOne(self):
-        from collective.salesforce.behavior.schema import SalesforceFieldMetadata
+        from collective.salesforce.content.schema import SalesforceFieldMetadata
         return SalesforceFieldMetadata()
 
     def test_read(self):

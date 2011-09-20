@@ -4,7 +4,7 @@
     xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     xmlns:grok="http://namespaces.zope.org/grok"
-    i18n_domain="collective.salesforce.behavior">
+    i18n_domain="collective.salesforce.content">
   
   <!-- Include configuration for dependencies listed in setup.py. -->
   <include package="plone.app.dexterity" file="meta.zcml" />
@@ -42,7 +42,7 @@
     
   <browser:page
     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-    name="salesforce-behavior"
+    name="salesforce-sync"
     class=".controlpanel.SalesforceBehaviorControlPanel"
     layer=".interfaces.ISalesforceBehaviorLayer"
     permission="cmf.ManagePortal"
@@ -80,16 +80,16 @@
     
   <genericsetup:registerProfile
     name="default"
-    title="Salesforce Behaviors for Dexterity Content Types"
+    title="collective.salesforce.content"
     directory="profiles/default"
     description="Behaviors for creating Dexterity content types that integrate with Salesforce."
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
 
   <genericsetup:importStep
-    name="collective.salesforce.behavior"
-    title="collective.salesforce.behavior"
-    description="Various setup tasks for collective.salesforce.behavior."
+    name="collective.salesforce.content"
+    title="collective.salesforce.content"
+    description=""
     handler=".setuphandlers.import_various">
   </genericsetup:importStep>
   
