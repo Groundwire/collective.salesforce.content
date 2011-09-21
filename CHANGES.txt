@@ -1,14 +1,20 @@
 Changelog
 =========
 
-1.0b1 (unreleased)
+1.0b1 (2011-09-20)
 ------------------
+
+* Wrote docs.
+  [davisagli - 2011-09-20]
 
 * Install a Salesforce base connector when the package is installed.
   [davisagli - 2011-09-20]
 
 * Rename package from collective.salesforce.behavior to 
   collective.salesforce.content.
+  [davisagli - 2011-09-20]
+
+* Moved repository to github.
   [davisagli - 2011-09-20]
 
 * Add option to sync a single object specified by Salesforce Id from the control
