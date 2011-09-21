@@ -4,7 +4,70 @@ How to...
 Set up automatic periodic synchronization
 -----------------------------------------
 
+Here is one way to automatically trigger the sync via a cron job. The sync will
+run in a separate process from your standard backend instances, so you must be
+using ZEO or RelStorage to allow multiple database connections.
 
+1. In the root of your buildout, create a file ``cronviews.py.in``::
+
+    from AccessControl.SecurityManagement import newSecurityManager
+    from AccessControl.SecurityManager import setSecurityPolicy
+    from Testing.makerequest import makerequest
+    from Products.CMFCore.tests.base.security import PermissiveSecurityPolicy, OmnipotentUser
+    from zope.app.publication.interfaces import BeforeTraverseEvent
+    from zope.event import notify
+    import transaction
+
+    # Get our variables from buildout in order.
+    site_path = '${site-path}'
+    view_names = """${views}"""
+
+    site_path = site_path.strip().strip('/')
+    views = [v.strip() for v in view_names.split() if v.strip()]
+
+    # Set up a generic manager user.
+    _policy=PermissiveSecurityPolicy()
+    _oldpolicy=setSecurityPolicy(_policy)
+    newSecurityManager(None, OmnipotentUser().__of__(app.acl_users))
+
+    # Set a request so that traversal succeeds.
+    app = makerequest(app)
+
+    # Fire a before traversal event so that browser layers get applied.
+    site = app.restrictedTraverse(site_path)
+    notify(BeforeTraverseEvent(site, site.REQUEST))
+
+    # Try to open the views.
+    for view in views:
+        try:
+            site.restrictedTraverse(view)()
+            transaction.commit()
+        except:
+            import traceback
+            traceback.print_exc()
+
+2. Add sections to buildout.cfg to install this script and run it via cron
+   (be sure to replace ``path/to/site``)::
+
+    [buildout]
+    parts =
+        cronviews
+        sfsync
+
+    [cronviews]
+    recipe = collective.recipe.template
+    input = ${buildout:directory}/cronviews.py.in
+    output = ${buildout:directory}/etc/cronviews.py
+    site-path = path/to/site
+    views =  
+        @@sf_sync
+    
+    [sfsync]
+    recipe = z3c.recipe.usercrontab
+    times = 00 1 * * *
+    command = ${buildout:executable} ${buildout:bin-directory}/instance run ${buildout:directory}/etc/cronviews.py
+
+3. Run the buildout to install the cron job.
 
 Sync a single object on demand
 ------------------------------

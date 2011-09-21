@@ -1,8 +1,8 @@
 Changelog
 =========
 
-0.1 (unreleased)
-----------------
+1.0b1 (unreleased)
+------------------
 
 * Install a Salesforce base connector when the package is installed.
   [davisagli - 2011-09-20]

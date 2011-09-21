@@ -3,33 +3,34 @@ Introduction
 
 ``collective.salesforce.content`` provides a Dexterity behavior for setting up
 Plone Dexterity content types that are connected to objects in a Salesforce.com
-database. These features are currently implemented:
+database. Arbitrary schema fields can be mapped and updated periodically based on
+automatic queries to Salesforce.
 
-* Metadata can be added to fields in a content type's schema to indicate how
-  the Dexterity object maps to a Salesforce object.
+This is currently an integrator-level package with minimal UI. As consultants,
+we have used this functionality as a foundation for solving use cases like:
 
-* A Salesforce Object behavior that can be added to a Dexterity type. The
-  behavior gives the type a Salesforce ID field and provides an indexer 
-  for that field. It also acts as an adapter to the ISalesforeObject
-  interface, which provides methods for syncing the object with Salesforce.
+* Expose a member directory on a public Plone website based on Account or Contact
+  records pulled from Salesforce.com each night.
 
-* A synchronization view that queries Salesforce and creates/updates the
-  appropriate objects in Plone. It looks for Dexterity FTIs with the 
-  aforementioned behavior, reads the Salesforce mappings from their schemas,
-  and executes the appropriate queries.
+* Provide browseable and searchable tables of arbitrary data whose
+  canonical storage is in Salesforce.com.
 
-* A simple converter system that uses adapters to convert values returned by
-  Salesforce into the appropriate schema values and vice-versa. These
-  converters can be registered globally for a particular field type, or they
-  can be specified by name for a field instance.
-  
-These features remain to be completed:
+* In conjunction with ``dexterity.membrane``, allow users represented in
+  Salesforce.com to log in to a Plone site, with appropriate roles based on their
+  status in Salesforce.com.
 
-* Recording changes from the Dexterity object back to Salesforce.
+* Pull pricing records from Salesforce as a basis for charging the correct amount
+  in online transactions on the Plone website.
 
-* Querying Salesforce for and updating a single Plone object.
+Documentation
+=============
 
-* Converters for more complex field types.
+`Read the documentation <http://readthedocs.org/docs/collectivesalesforcecontent/en/latest/>`_.
+
+Issue Tracker
+=============
+
+`Submit issues <https://github.com/Groundwire/collective.salesforce.content/issues>`_.
 
 Credits
 =======
