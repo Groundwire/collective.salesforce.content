@@ -4,6 +4,7 @@
     xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     xmlns:grok="http://namespaces.zope.org/grok"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
     i18n_domain="collective.salesforce.content">
   
   <!-- Include configuration for dependencies listed in setup.py. -->
@@ -93,4 +94,13 @@
     handler=".setuphandlers.import_various">
   </genericsetup:importStep>
   
+  <genericsetup:upgradeStep
+    zcml:condition="installed collective.salesforce.behavior"
+    profile="collective.salesforce.behavior:default"
+    source="*"
+    destination="*"
+    title="Replace collective.salesforce.behavior with collective.salesforce.content"
+    handler=".upgrade.replace_c_s_behavior"
+    />
+
 </configure>
