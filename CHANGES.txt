@@ -4,6 +4,10 @@ Changelog
 1.0 (unreleased)
 ----------------
 
+* Add an upgrade step to help replace old collective.salesforce.behavior
+  installations.
+  [davisagli - 2012-01-09]
+
 1.0b1 (2011-09-20)
 ------------------
 
