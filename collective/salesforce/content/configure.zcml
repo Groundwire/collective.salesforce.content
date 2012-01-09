@@ -37,7 +37,7 @@
     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
     name="sf_sync"
     class=".sync.SFSync"
-    layer=".interfaces.ISalesforceBehaviorLayer"
+    layer=".interfaces.ISalesforceContentLayer"
     permission="cmf.ManagePortal"
     />
     
@@ -45,7 +45,7 @@
     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
     name="salesforce-sync"
     class=".controlpanel.SalesforceBehaviorControlPanel"
-    layer=".interfaces.ISalesforceBehaviorLayer"
+    layer=".interfaces.ISalesforceContentLayer"
     permission="cmf.ManagePortal"
     />
     
@@ -98,7 +98,7 @@
     zcml:condition="installed collective.salesforce.behavior"
     profile="collective.salesforce.behavior:default"
     source="*"
-    destination="*"
+    destination="2"
     title="Replace collective.salesforce.behavior with collective.salesforce.content"
     handler=".upgrade.replace_c_s_behavior"
     />

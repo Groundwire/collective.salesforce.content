@@ -4,6 +4,9 @@ Changelog
 1.0 (unreleased)
 ----------------
 
+* Fix incorrect browser layer name.
+  [davisagli - 2012-01-09]
+
 * Add an upgrade step to help replace old collective.salesforce.behavior
   installations.
   [davisagli - 2012-01-09]
