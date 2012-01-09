@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '1.0.0dev'
+version = '1.0'
 
 setup(name='collective.salesforce.content',
       version=version,
