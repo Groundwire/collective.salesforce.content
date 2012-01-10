@@ -47,16 +47,22 @@ def queryFromSchema(schema, relationship_name=None, add_prefix=True, sf_object_i
             # Has sf:relationship but not sf:field
             elif schema_field_name in sf_relationships.keys():
                 field = schema[schema_field_name]
-                # Zope field is an collection whose value_type is IObject:
-                # build subquery based on the object schema
                 if ICollection.providedBy(field) and IObject.providedBy(field.value_type):
+                    # Zope field is an collection whose value_type is IObject:
+                    # build subquery based on the object schema
                     subquery = queryFromSchema(
                         field.value_type.schema,
                         relationship_name = sf_relationships[schema_field_name],
                         add_prefix = False)
                     prevent_dupe(selects, '(%s)' % subquery)
-                # Otherwise not supported
+                elif sf_relationships[schema_field_name] == 'Attachments':
+                    # Attachments are handled specially to avoid eating API requests.
+                    # We fetch metadata here, which is then digested by the converter
+                    # to determine whether the actual data should be re-fetched.
+                    subquery = '(SELECT Name, ContentType, BodyLength, SystemModstamp FROM Attachments WHERE IsDeleted=false AND IsPrivate=false)'
+                    prevent_dupe(selects, subquery)
                 else:
+                    # Otherwise not supported
                     raise ValueError('sf:relationship may only be specified without '
                                      'sf:field if the field is a zope.schema.Object.')
 
