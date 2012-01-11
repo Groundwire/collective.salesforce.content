@@ -1,9 +1,10 @@
 import unittest2 as unittest
-from zope.component import provideAdapter
+from zope.component import provideAdapter, provideUtility
 from zope.interface import Interface, implements, directlyProvides
 from zope import schema
 from zope.app.content.interfaces import IContentType
 from plone.testing.zca import UNIT_TESTING
+from DateTime import DateTime
 
 
 class TestSalesforceObject(unittest.TestCase):
@@ -175,6 +176,56 @@ class TestSalesforceObject(unittest.TestCase):
         sfobj.updatePloneObject(record=record)
         self.assertEqual([{'org': u'Groundwire', 'role': u'Code Monkey'}], sfobj.context.roles)
     
+    def test_updatePloneObject_attachments(self):
+        from collective.salesforce.content.converters import DefaultValueConverter
+        provideAdapter(DefaultValueConverter, [schema.interfaces.IField])
+        from collective.salesforce.content.converters import TextLineValueConverter
+        provideAdapter(TextLineValueConverter, [schema.interfaces.ITextLine])
+        from z3c.blobfile.storages import StringStorable
+        from z3c.blobfile.interfaces import IStorage
+        provideUtility(StringStorable(), provides=IStorage, name=u'__builtin__.str')
+        from plone.namedfile.field import NamedFile
+        
+        class IDummyAccount(Interface):
+            attachment = NamedFile()
+        directlyProvides(IDummyAccount, IContentType)
+        IDummyAccount.setTaggedValue('salesforce.object', 'Account')
+        IDummyAccount.setTaggedValue('salesforce.relationships', {'attachment': 'Attachments'})
+        sfobj = self._makeOne(schema = IDummyAccount)
+        class DummySalesforceConnector(object):
+            def query(self, soql):
+                return QueryRecordSet(
+                    records = [QueryRecord(
+                        Body = 'asdf',
+                        )],
+                    done = True,
+                    size = 1,
+                    )
+        sfobj.sfbc = DummySalesforceConnector()
+
+        from beatbox.python_client import QueryRecord, QueryRecordSet
+        record = QueryRecord(
+            Id = '1234',
+            Attachments = QueryRecordSet(
+                records = [QueryRecord(
+                    Id = '4321',
+                    Name = 'Attachment.pdf',
+                    ContentType = 'application/pdf',
+                    BodyLength = 0,
+                    SystemModstamp = DateTime(),
+                    )],
+                done = True,
+                size = 1,
+                ),
+            )
+        
+        sfobj.updatePloneObject(record=record)
+        from plone.namedfile.file import NamedBlobFile
+        self.assertTrue(isinstance(sfobj.context.attachment, NamedBlobFile))
+        self.assertEqual('Attachment.pdf', sfobj.context.attachment.filename)
+        self.assertEqual('application/pdf', sfobj.context.attachment.contentType)
+        self.assertEqual('asdf', sfobj.context.attachment.data)
+
     def test_updatePloneObject_no_record(self):
         sfobj = self._makeOne()
         self.assertRaises(Exception, sfobj.updatePloneObject)

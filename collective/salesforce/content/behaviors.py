@@ -11,6 +11,8 @@ from plone.memoize import instance
 from collective.salesforce.content.interfaces import ISalesforceObject, \
     ISalesforceObjectMarker
 from collective.salesforce.content.utils import convertRecord
+from Products.CMFCore.utils import getToolByName
+from plone.namedfile.file import NamedBlobFile
 
 
 class SalesforceObject(object):
@@ -19,6 +21,7 @@ class SalesforceObject(object):
     
     def __init__(self, context):
         self.context = context
+        self.sfbc = getToolByName(context, 'portal_baseconnector', None)
     
     def _get_sf_object_id(self):
         return getattr(self.context, 'sf_object_id', None)
@@ -77,7 +80,31 @@ class SalesforceObject(object):
             "need to provide zope.app.content.interfaces.IContentType?"
         
         for k, v in convertRecord(record, schema).items():
-            setattr(self.context, k, v)
+            try:
+                if v['is_attachment']:
+                    self._updateAttachment(k, v)
+            except (TypeError, KeyError):
+                setattr(self.context, k, v)
+
+    def _updateAttachment(self, fname, metadata):
+        current_value = getattr(self.context, fname, None)
+        current_metadata = getattr(current_value, '__sf_data_digest', None)
+        if current_metadata != metadata:
+            # we need an update
+            body = self._getAttachmentBody(metadata['id'])
+            if body is not None:
+                f = NamedBlobFile(
+                    body, metadata['mimetype'], metadata['filename'])
+                setattr(f, '__sf_data_digest', metadata)
+                setattr(self.context, fname, f)
+            else:
+                setattr(self.context, fname, None)
+
+    def _getAttachmentBody(self, id):
+        res = self.sfbc.query("SELECT Body FROM Attachment "
+                              "WHERE Id='%s'" % id)
+        if res['size']:
+            return res[0]['Body']
 
     def getContainer(self, default=None):
         """

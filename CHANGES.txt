@@ -1,9 +1,11 @@
 Changelog
 =========
 
-1.0.1 (unreleased)
-------------------
+1.1 (unreleased)
+----------------
 
+* Added support for syncing Attachments from Salesforce.
+  [davisagli - 2012-01-10]
 
 1.0 (2012-01-09)
 ----------------

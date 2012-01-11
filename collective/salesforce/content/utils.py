@@ -3,6 +3,8 @@ from zope.schema.interfaces import ICollection, IObject
 from beatbox.python_client import QueryRecord, QueryRecordSet
 from collective.salesforce.content import logger
 from collective.salesforce.content.interfaces import ISalesforceValueConverter
+from collective.salesforce.content.interfaces import IAttachment
+
 
 def prevent_dupe(l, value):
     if value not in l:
@@ -146,7 +148,13 @@ def convertRecord(record, schema):
             
             d[fname] = convertToSchemaValue(field, value)
         elif fname in sf_relationships:
-            if ICollection.providedBy(field) and IObject.providedBy(field.value_type):
+            if sf_relationships[fname] == 'Attachments':
+                subrecords = valueFromRecord(record, ['Attachments'])
+                if subrecords:
+                    att_digest = convertRecord(subrecords[0], IAttachment)
+                    att_digest['is_attachment'] = True
+                    d[fname] = att_digest
+            elif ICollection.providedBy(field) and IObject.providedBy(field.value_type):
                 subschema = field.value_type.schema
                 subvalues = []
                 for subrecord in valueFromRecord(record, sf_relationships[fname].split('.')):

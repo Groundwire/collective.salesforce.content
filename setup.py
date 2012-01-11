@@ -25,9 +25,12 @@ setup(name='collective.salesforce.content',
           'plone.app.dexterity',
           'plone.indexer',
           'Products.salesforcebaseconnector',
+          'plone.namedfile[blobs]',
       ],
       extras_require={
-          'test': ['plone.testing [zca]',],
+          'test': [
+              'plone.testing [zca]',
+              ],
       },
       entry_points="""
       [z3c.autoinclude.plugin]
