@@ -1,9 +1,10 @@
 from zope.component import getAdapter
 from zope.schema.interfaces import ICollection, IObject
+from zope.site.hooks import getSite
 from beatbox.python_client import QueryRecord, QueryRecordSet
 from collective.salesforce.content import logger
 from collective.salesforce.content.interfaces import ISalesforceValueConverter
-from collective.salesforce.content.interfaces import IAttachment
+from Products.CMFCore.utils import getToolByName
 
 
 def prevent_dupe(l, value):
@@ -57,12 +58,6 @@ def queryFromSchema(schema, relationship_name=None, add_prefix=True, sf_object_i
                         relationship_name = sf_relationships[schema_field_name],
                         add_prefix = False)
                     prevent_dupe(selects, '(%s)' % subquery)
-                elif sf_relationships[schema_field_name] == 'Attachments':
-                    # Attachments are handled specially to avoid eating API requests.
-                    # We fetch metadata here, which is then digested by the converter
-                    # to determine whether the actual data should be re-fetched.
-                    subquery = '(SELECT Id, Name, ContentType, BodyLength, SystemModstamp FROM Attachments WHERE IsDeleted=false AND IsPrivate=false)'
-                    prevent_dupe(selects, subquery)
                 else:
                     # Otherwise not supported
                     raise ValueError('sf:relationship may only be specified without '
@@ -148,13 +143,7 @@ def convertRecord(record, schema):
             
             d[fname] = convertToSchemaValue(field, value)
         elif fname in sf_relationships:
-            if sf_relationships[fname] == 'Attachments':
-                subrecords = valueFromRecord(record, ['Attachments'])
-                if subrecords:
-                    att_digest = convertRecord(subrecords[0], IAttachment)
-                    att_digest['is_attachment'] = True
-                    d[fname] = att_digest
-            elif ICollection.providedBy(field) and IObject.providedBy(field.value_type):
+            if ICollection.providedBy(field) and IObject.providedBy(field.value_type):
                 subschema = field.value_type.schema
                 subvalues = []
                 for subrecord in valueFromRecord(record, sf_relationships[fname].split('.')):
@@ -169,3 +158,7 @@ def convertRecord(record, schema):
             # (Things will blow up if there isn't a custom converter!)
             d[fname] = convertToSchemaValue(field, record)
     return d
+
+
+def getSalesforceConnector():
+    return getToolByName(getSite(), 'portal_salesforcebaseconnector')

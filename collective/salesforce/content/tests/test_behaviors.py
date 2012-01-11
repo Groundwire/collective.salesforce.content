@@ -10,7 +10,7 @@ from DateTime import DateTime
 class TestSalesforceObject(unittest.TestCase):
     layer = UNIT_TESTING
     
-    def _makeSite(self, expected_container):
+    def _makeSite(self, expected_container=None):
         from zope.site.site import SiteManagerContainer
         from zope.site.testing import siteSetUp, createSiteManager
         class DummySite(SiteManagerContainer):
@@ -177,20 +177,22 @@ class TestSalesforceObject(unittest.TestCase):
         self.assertEqual([{'org': u'Groundwire', 'role': u'Code Monkey'}], sfobj.context.roles)
     
     def test_updatePloneObject_attachments(self):
-        from collective.salesforce.content.converters import DefaultValueConverter
-        provideAdapter(DefaultValueConverter, [schema.interfaces.IField])
-        from collective.salesforce.content.converters import TextLineValueConverter
-        provideAdapter(TextLineValueConverter, [schema.interfaces.ITextLine])
+        site = self._makeSite()
+        from plone.namedfile.field import NamedBlobFile
+        from plone.namedfile.interfaces import INamedBlobFileField
+        from collective.salesforce.content.converters import SingleAttachmentConverter
+        provideAdapter(SingleAttachmentConverter, [INamedBlobFileField])
         from z3c.blobfile.storages import StringStorable
         from z3c.blobfile.interfaces import IStorage
         provideUtility(StringStorable(), provides=IStorage, name=u'__builtin__.str')
-        from plone.namedfile.field import NamedFile
         
         class IDummyAccount(Interface):
-            attachment = NamedFile()
+            attachment = NamedBlobFile()
         directlyProvides(IDummyAccount, IContentType)
         IDummyAccount.setTaggedValue('salesforce.object', 'Account')
-        IDummyAccount.setTaggedValue('salesforce.relationships', {'attachment': 'Attachments'})
+        IDummyAccount.setTaggedValue('salesforce.subqueries',
+            {'attachment': 'SELECT Id,Name,ContentType,BodyLength,SystemModstamp '
+                           'FROM Attachments WHERE IsDeleted=false AND IsPrivate=false'})
         sfobj = self._makeOne(schema = IDummyAccount)
         class DummySalesforceConnector(object):
             def query(self, soql):
@@ -201,7 +203,7 @@ class TestSalesforceObject(unittest.TestCase):
                     done = True,
                     size = 1,
                     )
-        sfobj.sfbc = DummySalesforceConnector()
+        site.portal_salesforcebaseconnector = DummySalesforceConnector()
 
         from beatbox.python_client import QueryRecord, QueryRecordSet
         record = QueryRecord(

@@ -100,11 +100,3 @@ class IAttachment(Interface):
     mimetype = schema.TextLine()
     length = schema.Int()
     modstamp = schema.Datetime()
-
-IAttachment.setTaggedValue('salesforce.fields', {
-    'id': 'Id',
-    'filename': 'Name',
-    'mimetype': 'ContentType',
-    'length': 'BodyLength',
-    'modstamp': 'SystemModstamp',
-    })

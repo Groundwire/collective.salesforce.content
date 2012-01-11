@@ -167,19 +167,6 @@ These directives are valid as attributes of the ``field`` tag.
      The subschema may have its own ``criteria`` directive to limit which
      related objects are queried.
   
-  .. note::
-     The ``relationship`` directive can be used to sync child Attachments of a
-     record in Salesforce. Since only one attachment can be retrieved per
-     Salesforce API request, care must be taken to avoid using up the quota.
-     In this case, the generated query is not based on a secondary schema, but
-     is hardcoded to::
-
-       SELECT Name, ContentType, BodyLength, SystemModstamp FROM Attachments
-       WHERE IsDeleted=false AND IsPrivate=false
-    
-     This query includes the metadata necessary for the converter to determine
-     whether the attachments' actual data needs to be updated.
-
   Finally, the ``relationship`` directive can also be used in conjunction with
   the ``field`` directive in order to obtain a single field from each of the
   related objects. For example, syncing the following field would set the

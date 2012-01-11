@@ -2,7 +2,10 @@ from zope.component import getAdapter
 from zope.interface import implements
 from plone.app.textfield.value import RichTextValue
 from collective.salesforce.content.interfaces import ISalesforceValueConverter
-        
+from collective.salesforce.content.interfaces import IAttachment
+from collective.salesforce.content.utils import getSalesforceConnector
+
+
 class DefaultValueConverter(object):
     implements(ISalesforceValueConverter)
     
@@ -66,3 +69,46 @@ class ListValueConverter(DefaultValueConverter):
         )
         
         return [item_converter.toSchemaValue(item) for item in value]
+
+
+class Attachment(object):
+    implements(IAttachment)
+
+    def __init__(self, **kw):
+        self.__dict__.update(kw)
+
+    @property
+    def digest(self):
+        return vars(self)
+
+    @property
+    def body(self):
+        sfbc = getSalesforceConnector()
+        res = sfbc.query("SELECT Body FROM Attachment "
+                         "WHERE Id='%s'" % self.id)
+        if res['size']:
+            return res[0]['Body'].decode('base64')
+
+
+
+
+class SingleAttachmentConverter(DefaultValueConverter):
+
+    def toSchemaValue(self, record):
+        attachments = record.get('Attachments')
+        if not attachments:
+            return
+
+        try:
+            record = attachments[0]
+            return Attachment(
+                id = record.Id,
+                filename = record.Name,
+                mimetype = record.ContentType,
+                length = record.BodyLength,
+                modstamp = record.SystemModstamp,
+                )
+        except (AttributeError, KeyError, IndexError):
+            raise TypeError('The attachment converter requires a list of '
+                'Attachment records that include Id, Name, ContentType, '
+                'BodyLength, and SystemModstamp.')

@@ -33,6 +33,10 @@
   <adapter for="zope.schema.interfaces.IList"
     factory=".converters.ListValueConverter" />
   
+  <adapter for="plone.namedfile.interfaces.INamedBlobFileField"
+    factory=".converters.SingleAttachmentConverter"
+    />
+  
   <browser:page
     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
     name="sf_sync"

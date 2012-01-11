@@ -13,6 +13,7 @@ from collective.salesforce.content.interfaces import ISalesforceObject, \
 from collective.salesforce.content.utils import convertRecord
 from Products.CMFCore.utils import getToolByName
 from plone.namedfile.file import NamedBlobFile
+from collective.salesforce.content.interfaces import IAttachment
 
 
 class SalesforceObject(object):
@@ -80,31 +81,24 @@ class SalesforceObject(object):
             "need to provide zope.app.content.interfaces.IContentType?"
         
         for k, v in convertRecord(record, schema).items():
-            try:
-                if v['is_attachment']:
-                    self._updateAttachment(k, v)
-            except (TypeError, KeyError):
+            if IAttachment.providedBy(v):
+                self._updateAttachment(k, v)
+            else:
                 setattr(self.context, k, v)
 
-    def _updateAttachment(self, fname, metadata):
+    def _updateAttachment(self, fname, attachment):
         current_value = getattr(self.context, fname, None)
-        current_metadata = getattr(current_value, '__sf_data_digest', None)
-        if current_metadata != metadata:
+        current_digest = getattr(current_value, '__sf_data_digest', None)
+        if current_digest != attachment.digest:
             # we need an update
-            body = self._getAttachmentBody(metadata['id'])
+            body = attachment.body
             if body is not None:
                 f = NamedBlobFile(
-                    body, metadata['mimetype'], metadata['filename'])
-                setattr(f, '__sf_data_digest', metadata)
+                    body, attachment.mimetype, attachment.filename)
+                setattr(f, '__sf_data_digest', attachment.digest)
                 setattr(self.context, fname, f)
             else:
                 setattr(self.context, fname, None)
-
-    def _getAttachmentBody(self, id):
-        res = self.sfbc.query("SELECT Body FROM Attachment "
-                              "WHERE Id='%s'" % id)
-        if res['size']:
-            return res[0]['Body'].decode('base64')
 
     def getContainer(self, default=None):
         """

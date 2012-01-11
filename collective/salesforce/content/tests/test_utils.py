@@ -123,12 +123,3 @@ class TestUtils(unittest.TestCase):
         schema.setTaggedValue('salesforce.subqueries', {'scalar': '(SELECT foo FROM bar)'})
         query = self._queryFromSchema(schema)
         self.assertEqual('SELECT Contact.Id, (SELECT foo FROM bar) FROM Contact', query)
-
-    def test_queryFromSchema_attachments(self):
-        schema = self._makeSchema()
-        schema.setTaggedValue('salesforce.object', 'Contact')
-        schema.setTaggedValue('salesforce.relationships', {'scalar': 'Attachments'})
-        query = self._queryFromSchema(schema)
-        self.assertEqual('SELECT Contact.Id, (SELECT Id, Name, ContentType, '
-            'BodyLength, SystemModstamp FROM Attachments '
-            'WHERE IsDeleted=false AND IsPrivate=false) FROM Contact', query)
