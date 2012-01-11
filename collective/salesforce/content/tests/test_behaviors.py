@@ -196,7 +196,7 @@ class TestSalesforceObject(unittest.TestCase):
             def query(self, soql):
                 return QueryRecordSet(
                     records = [QueryRecord(
-                        Body = 'asdf',
+                        Body = 'asdf'.encode('base64'),
                         )],
                     done = True,
                     size = 1,

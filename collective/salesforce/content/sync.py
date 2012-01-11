@@ -140,7 +140,7 @@ class SFSync(BrowserView):
                 del sfid_map[record.Id]
             
                 # skip updating items that haven't changed, based on the digest
-                if digest == sfobj.sf_data_digest:
+                if digest == sfobj.sf_data_digest and not sfobj.sf_object_id.startswith(sf_object_id):
                     continue
             
                 sfobj.updatePloneObject(record)

@@ -61,7 +61,7 @@ def queryFromSchema(schema, relationship_name=None, add_prefix=True, sf_object_i
                     # Attachments are handled specially to avoid eating API requests.
                     # We fetch metadata here, which is then digested by the converter
                     # to determine whether the actual data should be re-fetched.
-                    subquery = '(SELECT Name, ContentType, BodyLength, SystemModstamp FROM Attachments WHERE IsDeleted=false AND IsPrivate=false)'
+                    subquery = '(SELECT Id, Name, ContentType, BodyLength, SystemModstamp FROM Attachments WHERE IsDeleted=false AND IsPrivate=false)'
                     prevent_dupe(selects, subquery)
                 else:
                     # Otherwise not supported

@@ -21,7 +21,7 @@ class SalesforceObject(object):
     
     def __init__(self, context):
         self.context = context
-        self.sfbc = getToolByName(context, 'portal_baseconnector', None)
+        self.sfbc = getToolByName(getSite(), 'portal_salesforcebaseconnector', None)
     
     def _get_sf_object_id(self):
         return getattr(self.context, 'sf_object_id', None)
@@ -104,7 +104,7 @@ class SalesforceObject(object):
         res = self.sfbc.query("SELECT Body FROM Attachment "
                               "WHERE Id='%s'" % id)
         if res['size']:
-            return res[0]['Body']
+            return res[0]['Body'].decode('base64')
 
     def getContainer(self, default=None):
         """

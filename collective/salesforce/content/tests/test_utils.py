@@ -129,6 +129,6 @@ class TestUtils(unittest.TestCase):
         schema.setTaggedValue('salesforce.object', 'Contact')
         schema.setTaggedValue('salesforce.relationships', {'scalar': 'Attachments'})
         query = self._queryFromSchema(schema)
-        self.assertEqual('SELECT Contact.Id, (SELECT Name, ContentType, '
+        self.assertEqual('SELECT Contact.Id, (SELECT Id, Name, ContentType, '
             'BodyLength, SystemModstamp FROM Attachments '
             'WHERE IsDeleted=false AND IsPrivate=false) FROM Contact', query)
