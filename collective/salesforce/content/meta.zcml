@@ -22,5 +22,15 @@
 
   <utility name="salesforce.subqueries"
     factory=".schema.SalesforceSubqueryMetadata" />
+
+  <utility
+    component=".fields.SalesforcePicklistHandler"
+    name="collective.salesforce.content.fields.SalesforcePicklist"
+    />
+
+  <utility
+    component=".fields.SalesforceMultiPicklistHandler"
+    name="collective.salesforce.content.fields.SalesforceMultiPicklist"
+    />
   
 </configure>

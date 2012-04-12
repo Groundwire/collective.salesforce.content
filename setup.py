@@ -24,6 +24,7 @@ setup(name='collective.salesforce.content',
           'collective.autopermission',
           'plone.app.dexterity',
           'plone.indexer',
+          'plone.supermodel',
           'Products.salesforcebaseconnector',
       ],
       extras_require={
