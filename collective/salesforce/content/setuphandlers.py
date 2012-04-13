@@ -40,4 +40,6 @@ def import_various(context):
     if context.readDataFile('collective-salesforce-content-various.txt') is not None:
         portal = context.getSite()
         addCatalogIndexes(portal)
-        setUpSalesforce(portal)
+        from collective.salesforce.content import TESTING
+        if not TESTING:
+            setUpSalesforce(portal)
