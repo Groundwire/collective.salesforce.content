@@ -16,6 +16,7 @@ from collective.salesforce.content.interfaces import ISalesforceObjectMarker
 from collective.salesforce.content.interfaces import IModifiedViaSalesforceSync
 from collective.salesforce.content.events import NotFoundInSalesforceEvent, \
     UpdatedFromSalesforceEvent
+from collective.salesforce.content.vocabularies import PicklistsFromSalesforce
 from ZODB.POSException import ConflictError
 
 
@@ -36,6 +37,9 @@ class SFSync(BrowserView):
         """
         
         try:
+            logger.info('Syncing picklists for %s' % self.context.Title())
+            PicklistsFromSalesforce(self.context).queryObjects()
+
             logger.info('Syncing Salesforce objects for %s' 
                 % self.context.Title())
             # Loop through the FTIs that include the ISalesforceObject behavior.
