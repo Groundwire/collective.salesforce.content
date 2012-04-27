@@ -43,8 +43,11 @@ class PicklistsFromSalesforce(object):
         objects_to_get = self._objects_to_get
         if not objects_to_get:
             return
-        
-        sfbc = getToolByName(getSite(), 'portal_salesforcebaseconnector')
+
+        site = getSite()
+        if 'portal_salesforcebaseconnector' not in site:
+            return []
+        sfbc = getToolByName(site, 'portal_salesforcebaseconnector')
         
         # go through our list of SObjects, check if they have fields added,
         # and add them to our query
@@ -98,23 +101,19 @@ class PicklistsFromSalesforce(object):
             
     def get_picklist_values(self, sobject, field):
         key = sobject + '-' + field
-        terms = self._data.get(key, None)
+        terms = self._data.get(key, [])
         if terms:
             return terms
         
         self._add_field(sobject, field)
         self.queryObjects()
         
-        terms = self._data.get(key, None)
-        if terms:
-            return terms
+        terms = self._data.get(key, [])
+        return terms
 
 
 def get_picklist_from_sf(sobject, field):
     
     site = getSite()
-    if 'portal_salesforcebaseconnector' not in site:
-        return []
-
     data_loader = PicklistsFromSalesforce(site)
     return sorted(data_loader.get_picklist_values(sobject, field), key=attrgetter('title'))

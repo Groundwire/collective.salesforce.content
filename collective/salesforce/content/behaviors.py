@@ -11,6 +11,8 @@ from plone.memoize import instance
 from collective.salesforce.content.interfaces import ISalesforceObject, \
     ISalesforceObjectMarker
 from collective.salesforce.content.utils import convertRecord
+from collective.salesforce.content.sync import SFSync
+from Products.CMFCore.utils import getToolByName
 
 
 class SalesforceObject(object):
@@ -55,8 +57,12 @@ class SalesforceObject(object):
         """
         Returns the record matching this object from Salesforce.
         """
-        
-        raise Exception('Not implemented.')
+        sync_view = SFSync(self.context, self.context.REQUEST)
+        portal_types = getToolByName(self.context, 'portal_types')
+        fti = portal_types[self.context.portal_type]
+        query = sync_view.getQueryFromType(fti, sf_object_id=self.sf_object_id)
+        records = sync_view.getResults(query)
+        return list(records)[0]
     
     def updatePloneObject(self, record=None):
         """
