@@ -106,6 +106,31 @@ Query the ``sf_object_id`` catalog index::
       item = res[0].getObject()
 
 
+Set up vocabularies based on Salesforce picklists
+-------------------------------------------------
+
+If you want to set up a Choice field using a vocabulary from Salesforce,
+you can use the ``SalesforcePicklist`` field instead::
+
+    <field name="experience" type="collective.salesforce.content.fields.SalesforcePicklist" sf:field="Experience__c">
+      <title>Experience</title>
+      <required>False</required>
+    </field>
+
+The picklist values will be automatically retrieved from Salesforce when
+needed, and cached in the ZODB.
+
+For a multi-select choice (Set of Choice) that obtains its vocabulary this way,
+use ``SalesforceMultiPicklist``::
+
+    <field name="company_industry" type="collective.salesforce.content.fields.SalesforceMultiPicklist"
+      form:widget="z3c.form.browser.checkbox.CheckBoxFieldWidget"
+      sf:field="Industry__c">
+      <title>Industries</title>
+      <required>False</required>
+    </field>
+
+
 Perform custom actions when objects are synced, or no longer synced
 -------------------------------------------------------------------
 
