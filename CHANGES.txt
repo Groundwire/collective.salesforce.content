@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.1 (unreleased)
+1.1 (2012-05-08)
 ----------------
 
 * Add an option to configure a token that allows triggering a sync as an
