@@ -4,6 +4,10 @@ Changelog
 1.1 (unreleased)
 ----------------
 
+* Add an option to configure a token that allows triggering a sync as an
+  anonymous user as long as you provide the correct token.
+  [davisagli - 2012-05-08]
+
 * Add SalesforcePicklist and SalesforceMultiPicklist fields, which are like
   Choice and Set of Choice but automatically load their vocabularies from
   the picklist in Salesforce.

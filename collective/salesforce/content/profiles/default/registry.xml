@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<registry>
+	<record name="collective.salesforce.content.sync_key">
+        <field type="plone.registry.field.ASCIILine">
+            <title>Salesforce sync key</title>
+            <description>Key that can be used to grant access to the Salesforce sync view.</description>
+        </field>
+    </record>
+</registry>

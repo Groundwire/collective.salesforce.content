@@ -33,12 +33,15 @@
   <adapter for="zope.schema.interfaces.IList"
     factory=".converters.ListValueConverter" />
   
+  <!-- The sync view is not protected by a permission here,
+       but does its own permission check if the user doesn't
+       supply a valid token. -->
   <browser:page
     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
     name="sf_sync"
     class=".sync.SFSync"
     layer=".interfaces.ISalesforceContentLayer"
-    permission="cmf.ManagePortal"
+    permission="zope.Public"
     />
     
   <browser:page
@@ -101,6 +104,15 @@
     destination="2"
     title="Replace collective.salesforce.behavior with collective.salesforce.content"
     handler=".upgrade.replace_c_s_behavior"
+    />
+
+  <genericsetup:upgradeDepends
+    source="0.1"
+    destination="1"
+    title="Add registry setting"
+    description=""
+    profile="collective.salesforce.content:default"
+    import_steps="plone.app.registry"
     />
 
 </configure>

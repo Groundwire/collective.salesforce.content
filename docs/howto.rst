@@ -81,6 +81,14 @@ Salesforce object type of the item.
 
 Click Synchronize Now to sync the single item.
 
+There is also an API to trigger this sync for a particular object from an
+external system (such as a button on an object in Salesforce). To set it up,
+go to the Configuration Registry and set a value for the
+``collective.salesforce.content.sync_key`` key. Then you can run a sync via,
+e.g., http://path/to/plone/sf_sync?token=TOKEN&types:list=OBJTYPE&sf_object_id=ID
+where TOKEN is the sync key you configured, OBJTYPE is the Salesforce object type
+of the object you want to sync, and ID is its Salesforce Id.
+
 
 Obtain the Salesforce Id of a Plone item
 ----------------------------------------

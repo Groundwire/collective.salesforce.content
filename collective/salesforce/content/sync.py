@@ -6,9 +6,14 @@ from zope.interface import alsoProvides
 from zope.event import notify
 from zope.lifecycleevent import ObjectCreatedEvent, ObjectModifiedEvent
 from zope.publisher.browser import BrowserView
+from AccessControl import getSecurityManager
+from AccessControl.SecurityManagement import newSecurityManager
+from AccessControl.User import UnrestrictedUser
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.utils import getToolByName
+from zExceptions import Unauthorized
 from plone.dexterity.interfaces import IDexterityFTI
+from plone.registry.interfaces import IRegistry
 from collective.salesforce.content import logger
 from collective.salesforce.content.utils import queryFromSchema
 from collective.salesforce.content.interfaces import ISalesforceObject
@@ -31,11 +36,22 @@ class SFSync(BrowserView):
     Synchronizes Plone objects with their corresponding Salesforce objects.
     """
     
-    def __call__(self, catch_errors=False, email=None, types=[], sf_object_id=None):
+    def __call__(self, token=None, catch_errors=False, email=None, types=[], sf_object_id=None):
         """
         Perform the synchronization.
         """
         
+        # Protection:
+        # Make sure the user has Manager access or has provided the sync key.
+        if not getSecurityManager().checkPermission('Manage portal', self.context):
+            registry = getUtility(IRegistry)
+            sync_key = registry.get('collective.salesforce.content.sync_key')
+            if not sync_key or token != sync_key:
+                raise Unauthorized
+            # become a superuser
+            user = UnrestrictedUser('manager', '', ['Manager'], [])
+            newSecurityManager(None, user)
+
         try:
             logger.info('Syncing picklists for %s' % self.context.Title())
             PicklistsFromSalesforce(self.context).queryObjects()
@@ -75,7 +91,9 @@ class SFSync(BrowserView):
                         pass
             else:
                 raise
-                        
+
+        return 'Successfully ran sync.'
+
     def getDexterityTypes(self):
         """
         Returns a list of Dexterity FTIs.
