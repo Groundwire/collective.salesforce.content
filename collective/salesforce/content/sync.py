@@ -142,13 +142,7 @@ class SFSync(BrowserView):
         
         catalog = getToolByName(self.context, 'portal_catalog')
         query = {
-            'object_provides': {
-                'query': [
-                    schema.__identifier__,
-                    ISalesforceObjectMarker.__identifier__,
-                ],
-                'operator': 'and',
-            }
+            'object_provides': schema.__identifier__,
         }
         
         sfid_map = dict([(b.sf_object_id, b) for b in catalog.searchResults(query) \

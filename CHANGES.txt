@@ -4,6 +4,10 @@ Changelog
 1.1.1 (unreleased)
 ------------------
 
+* When syncing, only query for the right content schema, not for the
+  behavior interface. This avoids the need for a reindex of the object_provides
+  index after upgrading from collective.salesforce.behavior.
+  [davisagli - 2012-06-18]
 
 1.1 (2012-05-08)
 ----------------
