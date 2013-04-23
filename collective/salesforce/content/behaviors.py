@@ -95,8 +95,7 @@ class SalesforceObject(object):
             body = attachment.body
             if body is not None:
                 filename = safe_unicode(attachment.filename)
-                f = NamedBlobFile(
-                    body, attachment.mimetype, filename)
+                f = NamedBlobFile(body, attachment.mimetype, filename)
                 setattr(f, '__sf_data_digest', attachment.digest)
                 setattr(self.context, fname, f)
             else:
