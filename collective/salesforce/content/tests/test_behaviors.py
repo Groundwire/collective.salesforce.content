@@ -220,7 +220,6 @@ class TestSalesforceObject(unittest.TestCase):
                 size = 1,
                 ),
             )
-        import pdb; pdb.set_trace( )
         sfobj.updatePloneObject(record=record)
         from plone.namedfile.file import NamedBlobFile
         self.assertTrue(isinstance(sfobj.context.attachment, NamedBlobFile))
