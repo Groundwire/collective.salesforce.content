@@ -8,6 +8,7 @@ from five import grok
 from plone.indexer import indexer
 from plone.dexterity.interfaces import IDexterityContent
 from plone.memoize import instance
+from Products.CMFPlone.utils import safe_unicode
 from collective.salesforce.content.interfaces import ISalesforceObject, \
     ISalesforceObjectMarker
 from collective.salesforce.content.utils import convertRecord
@@ -93,8 +94,9 @@ class SalesforceObject(object):
             # we need an update
             body = attachment.body
             if body is not None:
+                filename = safe_unicode(attachment.filename)
                 f = NamedBlobFile(
-                    body, attachment.mimetype, attachment.filename)
+                    body, attachment.mimetype, filename)
                 setattr(f, '__sf_data_digest', attachment.digest)
                 setattr(self.context, fname, f)
             else:
