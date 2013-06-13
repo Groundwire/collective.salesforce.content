@@ -4,6 +4,9 @@ Changelog
 1.1.1 (unreleased)
 ------------------
 
+* Update imports for compatibility with Plone 4.3.
+  [davisagli - 2013-06-13]
+
 * When syncing, only query for the right content schema, not for the
   behavior interface. This avoids the need for a reindex of the object_provides
   index after upgrading from collective.salesforce.behavior.

@@ -1,7 +1,7 @@
+from .compat import getSite
+from .compat import INameChooser
 from Acquisition import aq_base, aq_inner
 from zope.app.content import queryContentType
-from zope.app.component.hooks import getSite
-from zope.app.container.interfaces import INameChooser
 from zope.component import adapts
 from zope.interface import implements
 from five import grok
@@ -129,7 +129,8 @@ class SalesforceObject(object):
         
         new_name = container._setObject(name, self.context)
         self.context = container._getOb(new_name)
-                    
+
+
 @indexer(ISalesforceObjectMarker)
 def sf_object_id_indexer(obj):
     sfobj = ISalesforceObject(aq_base(obj), None)

@@ -1,7 +1,7 @@
+from .compat import getSite
 from operator import attrgetter
 from zope.component import getAllUtilitiesRegisteredFor
 from zope.annotation.interfaces import IAnnotations
-from zope.site.hooks import getSite
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 from plone.dexterity.interfaces import IDexterityFTI
